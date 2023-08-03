@@ -91,12 +91,12 @@ class Configuration(BaseModel):
     bifac_toitureS5: int = Field(default=0)
     bifac_toitureS6: int = Field(default=0)
 
-    bifac_ratio_toitureS1: float = Field(default=0.65)
-    bifac_ratio_toitureS2: float = Field(default=0.65)
-    bifac_ratio_toitureS3: float = Field(default=0.65)
-    bifac_ratio_toitureS4: float = Field(default=0.65)
-    bifac_ratio_toitureS5: float = Field(default=0.65)
-    bifac_ratio_toitureS6: float = Field(default=0.65)
+    bifac_ratio_toitureS1: float = Field(default=0)
+    bifac_ratio_toitureS2: float = Field(default=0)
+    bifac_ratio_toitureS3: float = Field(default=0)
+    bifac_ratio_toitureS4: float = Field(default=0)
+    bifac_ratio_toitureS5: float = Field(default=0)
+    bifac_ratio_toitureS6: float = Field(default=0)
 
     H_toitureS1: float = Field(default=4)
     H_toitureS2: float = Field(default=4)
@@ -125,9 +125,9 @@ class Configuration(BaseModel):
     H_ombS2: float = Field(default=4)
     H_ombS3: float = Field(default=4)
 
-    inter_ombS1 : float = Field(deafult=2.5)
-    inter_ombS2 : float = Field(deafult=2.5)
-    inter_ombS3 : float = Field(deafult=2.5)
+    inter_ombS1 : float = Field(default=2.5)
+    inter_ombS2 : float = Field(default=2.5)
+    inter_ombS3 : float = Field(default=2.5)
 
     
     
@@ -143,9 +143,9 @@ class Configuration(BaseModel):
     H_serS2: float = Field(default=4)
     H_serS3: float = Field(default=4)
 
-    inter_serS1 : float = Field(deafult=2.5)
-    inter_serS2 : float = Field(deafult=2.5)
-    inter_serS3 : float = Field(deafult=2.5)
+    inter_serS1 : float = Field(default=2.5)
+    inter_serS2 : float = Field(default=2.5)
+    inter_serS3 : float = Field(default=2.5)
 
     
     # Ratio P90/P50
