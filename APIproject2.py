@@ -77,12 +77,77 @@ class Configuration(BaseModel):
     #r_DCAC ratio
     r_DCAC:float=Field(default=1.2) # DEFAUT = 1.2
 
-    # Inputs pour Ombrière ou Serre
-    bifac:int=Field(default=0) #Si bifac = 0, module non bifacial, sinon = 1 si bifacial. DEFAUT = 0
+    # Inputs pour Ombrière ou Serre / toiture
+
+    """bifac:int=Field(default=0) #Si bifac = 0, module non bifacial, sinon = 1 si bifacial. DEFAUT = 0
     bifac_ratio: float=Field(default=0.65) # DEFAUT = 0.65
     H:float=Field(default=4) # DEFAUT = 4m
-    inter:float=Field(default=2.5) # DEFAUT = 2.5m
+    inter:float=Field(default=2.5) # DEFAUT = 2.5m"""
 
+    bifac_toitureS1: int = Field(default=0)
+    bifac_toitureS2: int = Field(default=0)
+    bifac_toitureS3: int = Field(default=0)
+    bifac_toitureS4: int = Field(default=0)
+    bifac_toitureS5: int = Field(default=0)
+    bifac_toitureS6: int = Field(default=0)
+
+    bifac_ratio_toitureS1: float = Field(default=0.65)
+    bifac_ratio_toitureS2: float = Field(default=0.65)
+    bifac_ratio_toitureS3: float = Field(default=0.65)
+    bifac_ratio_toitureS4: float = Field(default=0.65)
+    bifac_ratio_toitureS5: float = Field(default=0.65)
+    bifac_ratio_toitureS6: float = Field(default=0.65)
+
+    H_toitureS1: float = Field(default=4)
+    H_toitureS2: float = Field(default=4)
+    H_toitureS3: float = Field(default=4)
+    H_toitureS4: float = Field(default=4)
+    H_toitureS5: float = Field(default=4)
+    H_toitureS6: float = Field(default=4)
+
+    inter_toitureS1 : float = Field(default=2.5)
+    inter_toitureS2 : float = Field(default=2.5)
+    inter_toitureS3 : float = Field(default=2.5)
+    inter_toitureS4 : float = Field(default=2.5)
+    inter_toitureS5 : float = Field(default=2.5)
+    inter_toitureS6 : float = Field(default=2.5)
+
+
+    bifac_ombS1 : int = Field(default=0)
+    bifac_ombS2 : int = Field(default=0)
+    bifac_ombS3 : int = Field(default=0)
+
+    bifac_ratio_ombS1: float = Field(default=0.65)
+    bifac_ratio_ombS2: float = Field(default=0.65)
+    bifac_ratio_ombS3: float = Field(default=0.65)
+
+    H_ombS1: float = Field(default=4)
+    H_ombS2: float = Field(default=4)
+    H_ombS3: float = Field(default=4)
+
+    inter_ombS1 : float = Field(deafult=2.5)
+    inter_ombS2 : float = Field(deafult=2.5)
+    inter_ombS3 : float = Field(deafult=2.5)
+
+    
+    
+    bifac_serS1 : int = Field(default=0)
+    bifac_serS2 : int = Field(default=0)
+    bifac_serS3 : int = Field(default=0)
+
+    bifac_ratio_serS1: float = Field(default=0.65)
+    bifac_ratio_serS2: float = Field(default=0.65)
+    bifac_ratio_serS3: float = Field(default=0.65)
+
+    H_serS1: float = Field(default=4)
+    H_serS2: float = Field(default=4)
+    H_serS3: float = Field(default=4)
+
+    inter_serS1 : float = Field(deafult=2.5)
+    inter_serS2 : float = Field(deafult=2.5)
+    inter_serS3 : float = Field(deafult=2.5)
+
+    
     # Ratio P90/P50
     r_P90:float=Field(default=0.94)
 
@@ -170,7 +235,7 @@ def calculate_pv():
     # Resolution du modèle
     single_res=pvlib.pvsystem.singlediode(photocurrent=IL,
                                         saturation_current=I0,
-                                        resistance_series=Rs,
+                                        resistanceies=Rs,
                                         resistance_shunt=Rsh,
                                         nNsVth=nNsVth,
                                         ivcurve_pnts=None,
@@ -194,6 +259,36 @@ def calculate_pv():
         return configuration.rho*configuration.bifac*(1.037*(1-1/(np.sqrt(configuration.inter)))*(1-np.exp(-(8.691-H)/configuration.inter))+0.125*(1-1/configuration.inter**4))
     gain=gain_bifac(configuration.bifac,configuration.bifac_ratio,configuration.H,configuration.inter)
 
+    def calculate_gain_for_surface(surface_config):
+        if surface_config["surface"] != 0:
+            return gain_bifac(
+                surface_config["bifac"],
+                surface_config["bifac_ratio"],
+                surface_config["H"],
+                surface_config["inter"]
+            )
+        return 0
+    
+    surfaces_configurations = [
+        # Configurations for toiture
+        {"name": "toiture_surface1", "surface": configuration.toiture_surface1, "bifac": configuration.bifac_toitureS1, "bifac_ratio": configuration.bifac_ratio_toitureS1, "H": configuration.H_toitureS1, "inter": configuration.inter_toitureS1},
+        {"name": "toiture_surface2", "surface": configuration.toiture_surface2, "bifac": configuration.bifac_toitureS2, "bifac_ratio": configuration.bifac_ratio_toitureS2, "H": configuration.H_toitureS2, "inter": configuration.inter_toitureS2},
+        {"name": "toiture_surface3", "surface": configuration.toiture_surface3, "bifac": configuration.bifac_toitureS3, "bifac_ratio": configuration.bifac_ratio_toitureS3, "H": configuration.H_toitureS3, "inter": configuration.inter_toitureS3},
+        {"name": "toiture_surface4", "surface": configuration.toiture_surface4, "bifac": configuration.bifac_toitureS4, "bifac_ratio": configuration.bifac_ratio_toitureS4, "H": configuration.H_toitureS4, "inter": configuration.inter_toitureS4},
+        {"name": "toiture_surface5", "surface": configuration.toiture_surface5, "bifac": configuration.bifac_toitureS5, "bifac_ratio": configuration.bifac_ratio_toitureS5, "H": configuration.H_toitureS5, "inter": configuration.inter_toitureS5},
+        {"name": "toiture_surface6", "surface": configuration.toiture_surface6, "bifac": configuration.bifac_toitureS6, "bifac_ratio": configuration.bifac_ratio_toitureS6, "H": configuration.H_toitureS6, "inter": configuration.inter_toitureS6},
+        # Configurations for ombrière
+        {"name": "ombriere_surface1", "surface": configuration.ombriere_surface1, "bifac": configuration.bifac_ombS1, "bifac_ratio": configuration.bifac_ratio_ombS1, "H": configuration.H_ombS1, "inter": configuration.inter_ombS1},
+        {"name": "ombriere_surface2", "surface": configuration.ombriere_surface2, "bifac": configuration.bifac_ombS2, "bifac_ratio": configuration.bifac_ratio_ombS2, "H": configuration.H_ombS2, "inter": configuration.inter_ombS2},
+        {"name": "ombriere_surface3", "surface": configuration.ombriere_surface3, "bifac": configuration.bifac_ombS3, "bifac_ratio": configuration.bifac_ratio_ombS3, "H": configuration.H_ombS3, "inter": configuration.inter_ombS3},
+        # Configurations for serre
+        {"name": "serre_surface1", "surface": configuration.serre_surface1, "bifac": configuration.bifac_serS1, "bifac_ratio": configuration.bifac_ratio_serS1, "H": configuration.H_serS1, "inter": configuration.inter_serS1},
+        {"name": "serre_surface2", "surface": configuration.serre_surface2, "bifac": configuration.bifac_serS2, "bifac_ratio": configuration.bifac_ratio_serS2, "H": configuration.H_serS2, "inter": configuration.inter_serS2},
+        {"name": "serre_surface3", "surface": configuration.serre_surface3, "bifac": configuration.bifac_serS3, "bifac_ratio": configuration.bifac_ratio_serS3, "H": configuration.H_serS3, "inter": configuration.inter_serS3},
+    ]
+
+    gains = {config["name"]: calculate_gain_for_surface(config) for config in surfaces_configurations}
+
 
     # Résulta final "nombre d'heur":
     n_h90 #résultat final - nombre d'heures équivalent d'ensoleillement, en kWh/kWc/an
@@ -214,7 +309,7 @@ def calculate_pv():
 
     
     
-    data = {'hourly_P_ac': hourly_P_ac, 'result':result}
+    data = {'hourly_P_ac': hourly_P_ac, 'result':result, 'gain': gains}
 
     return jsonify(data)
 
