@@ -84,12 +84,12 @@ class Configuration(BaseModel):
     H:float=Field(default=4) # DEFAUT = 4m
     inter:float=Field(default=2.5) # DEFAUT = 2.5m"""
 
-    bifac_toitureS1: int = Field(default=0)
-    bifac_toitureS2: int = Field(default=0)
-    bifac_toitureS3: int = Field(default=0)
-    bifac_toitureS4: int = Field(default=0)
-    bifac_toitureS5: int = Field(default=0)
-    bifac_toitureS6: int = Field(default=0)
+    bifac_toitureS1: float = Field(default=0)
+    bifac_toitureS2: float = Field(default=0)
+    bifac_toitureS3: float = Field(default=0)
+    bifac_toitureS4: float = Field(default=0)
+    bifac_toitureS5: float = Field(default=0)
+    bifac_toitureS6: float = Field(default=0)
 
     bifac_ratio_toitureS1: float = Field(default=0)
     bifac_ratio_toitureS2: float = Field(default=0)
@@ -113,9 +113,9 @@ class Configuration(BaseModel):
     inter_toitureS6 : float = Field(default=2.5)
 
 
-    bifac_ombS1 : int = Field(default=0)
-    bifac_ombS2 : int = Field(default=0)
-    bifac_ombS3 : int = Field(default=0)
+    bifac_ombS1 : float = Field(default=0)
+    bifac_ombS2 : float = Field(default=0)
+    bifac_ombS3 : float = Field(default=0)
 
     bifac_ratio_ombS1: float = Field(default=0.65)
     bifac_ratio_ombS2: float = Field(default=0.65)
@@ -131,9 +131,9 @@ class Configuration(BaseModel):
 
     
     
-    bifac_serS1 : int = Field(default=0)
-    bifac_serS2 : int = Field(default=0)
-    bifac_serS3 : int = Field(default=0)
+    bifac_serS1 : float = Field(default=0)
+    bifac_serS2 : float = Field(default=0)
+    bifac_serS3 : float = Field(default=0)
 
     bifac_ratio_serS1: float = Field(default=0.65)
     bifac_ratio_serS2: float = Field(default=0.65)
@@ -235,7 +235,7 @@ def calculate_pv():
     # Resolution du modèle
     single_res=pvlib.pvsystem.singlediode(photocurrent=IL,
                                         saturation_current=I0,
-                                        resistanceies=Rs,
+                                        resistance_series=Rs,
                                         resistance_shunt=Rsh,
                                         nNsVth=nNsVth,
                                         ivcurve_pnts=None,
@@ -256,8 +256,7 @@ def calculate_pv():
 
     # Calcul du gain bifacial:
     def gain_bifac(bifac,bifac_ratio,H,inter):
-        return configuration.rho*configuration.bifac*(1.037*(1-1/(np.sqrt(configuration.inter)))*(1-np.exp(-(8.691-H)/configuration.inter))+0.125*(1-1/configuration.inter**4))
-    gain=gain_bifac(configuration.bifac,configuration.bifac_ratio,configuration.H,configuration.inter)
+        return configuration.rho*bifac*(1.037*(1-1/(np.sqrt(inter)))*(1-np.exp(-(8.691-H)/inter))+0.125*(1-1/inter**4))
 
     def calculate_gain_for_surface(surface_config):
         if surface_config["surface"] != 0:
@@ -315,4 +314,3 @@ def calculate_pv():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
