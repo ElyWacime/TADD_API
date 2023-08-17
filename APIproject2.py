@@ -314,3 +314,5 @@ def calculate_pv():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+"""Dans "PV configuration", imprimer la variable "result", pour chaque configuration: càd dans les cellules F26, F45, F64, F84, F104, F123, F151, F175, F199, F227, F251 et F275"""
