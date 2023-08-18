@@ -400,8 +400,17 @@ for config in surfaces_configurations:
         if single_res_for_config[config_name] is not None:
             P_dc_for_config[config_name] = single_res_for_config[config_name]['p_mp']*(
                 1-mismatch)*(1-connections)*(1-DCwiring)/module_area
+            
+            P_dc_for_config[config_name].loc[P_dc_for_config[config_name] <= 0] = 0
+            
             P_ac_for_config[config_name] = P_dc_for_config[config_name] * \
                 (1-inverterloss)*(1-np.exp((-inverter_load-0.04)/0.04))
+            P_ac_for_config[config_name].loc[P_ac_for_config[config_name] \
+                                             < inverter_min*eta_module*1000/r_DCAC*(1-ACwiring)]=0
+            P_ac_for_config[config_name].loc[P_ac_for_config[config_name]\
+                                              > eta_module*1000/r_DCAC] = eta_module*1000/r_DCAC
+
+print(P_dc_for_config)
 ########### **************#############
 # Calcul du nombre d'heure
 n_h90 = sum(P_ac)/1000/eta_module*r_P90  # en kWh/kWc
@@ -413,7 +422,7 @@ n_h90_for_config = {config["name"]: round(sum(
 
 """P_ac_for_config = pd.DataFrame(P_ac_for_config)
 P_ac_for_config = P_ac_for_config.to_dict()"""
-print(P_ac_for_config)
+
 
 
 def gain_bifac(bifac, bifac_ratio, H, inter):

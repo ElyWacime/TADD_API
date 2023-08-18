@@ -414,13 +414,20 @@ def calculate_pv():
     P_ac_for_config = {}
     for config in surfaces_configurations:
         config_name = config["name"]
-        if "surface_azimuth" in config:
-            if single_res_for_config[config_name] is not None:
-                P_dc_for_config[config_name] = single_res_for_config[config_name]['p_mp']*(
-                    1-configuration.mismatch)*(1-configuration.connections)*(1-configuration.DCwiring)/module_area
-                P_ac_for_config[config_name] = P_dc_for_config[config_name] * \
-                    (1-configuration.inverterloss) * \
-                    (1-np.exp((-inverter_load-0.04)/0.04))
+        if "surface_azimuth" in config and single_res_for_config[config_name] is not None:
+            P_dc_for_config[config_name] = single_res_for_config[config_name]['p_mp']*(
+                1-configuration.mismatch)*(1-configuration.connections)*(1-configuration.DCwiring)/module_area
+            
+            P_dc_for_config[config_name].loc[P_dc_for_config[config_name] <= 0] = 0
+            
+            P_ac_for_config[config_name] = P_dc_for_config[config_name] * \
+                (1-configuration.inverterloss)*(1-np.exp((-inverter_load-0.04)/0.04))
+            P_ac_for_config[config_name].loc[P_ac_for_config[config_name] \
+                                             < configuration.inverter_min*eta_module*1000/configuration.r_DCAC \
+                                                *(1-configuration.ACwiring)]=0
+            P_ac_for_config[config_name].loc[P_ac_for_config[config_name]\
+                                              > eta_module*1000/configuration.r_DCAC] \
+                                                = eta_module*1000/configuration.r_DCAC
 
     ########### **************#############
 

@@ -283,3 +283,29 @@ Traceback (most recent call last):
   File "/usr/lib/python3.10/json/encoder.py", line 257, in iterencode
     return _iterencode(o, 0)
 TypeError: keys must be str, int, float, bool or None, not Timestamp
+2023-08-18 19:08:15,305 - APIproject2 - ERROR - Exception on /calculate_pv [POST]
+Traceback (most recent call last):
+  File "C:\Users\pc\anaconda3\lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\pc\anaconda3\lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\pc\anaconda3\lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\pc\anaconda3\lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "C:\Users\pc\Desktop\enervivo\APIproject\TADD_API\APIproject2.py", line 417, in calculate_pv
+    if single_res_for_config[config_name] is not None:
+KeyError: 'toiture_surface1'
+2023-08-18 19:09:27,029 - APIproject2 - ERROR - Exception on /calculate_pv [POST]
+Traceback (most recent call last):
+  File "C:\Users\pc\anaconda3\lib\site-packages\flask\app.py", line 2525, in wsgi_app
+    response = self.full_dispatch_request()
+  File "C:\Users\pc\anaconda3\lib\site-packages\flask\app.py", line 1822, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "C:\Users\pc\anaconda3\lib\site-packages\flask\app.py", line 1820, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\pc\anaconda3\lib\site-packages\flask\app.py", line 1796, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "C:\Users\pc\Desktop\enervivo\APIproject\TADD_API\APIproject2.py", line 417, in calculate_pv
+    if "surface_azimuth" in config and single_res_for_config[config_name] is not None:
+KeyError: 'toiture_surface1'
