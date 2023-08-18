@@ -410,7 +410,14 @@ for config in surfaces_configurations:
             P_ac_for_config[config_name].loc[P_ac_for_config[config_name]\
                                               > eta_module*1000/r_DCAC] = eta_module*1000/r_DCAC
 
-print(P_dc_for_config)
+product_for_config = {config["name"]: P_ac_for_config[config["name"]] * config["surface"]
+                    for config in surfaces_configurations
+                    if config["name"]in P_ac_for_config}
+                
+product_for_config = pd.concat(P_ac_for_config, axis=1)
+sum_P_ac_for_config = product_for_config.sum(axis=1)
+print(sum_P_ac_for_config)
+
 ########### **************#############
 # Calcul du nombre d'heure
 n_h90 = sum(P_ac)/1000/eta_module*r_P90  # en kWh/kWc

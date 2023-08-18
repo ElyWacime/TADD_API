@@ -85,6 +85,19 @@ class Configuration(BaseModel):
     bifac_ratio: float=Field(default=0.65) # DEFAUT = 0.65
     H:float=Field(default=4) # DEFAUT = 4m
     inter:float=Field(default=2.5) # DEFAUT = 2.5m"""
+    surface_azimuth_toitureS1: float = Field(default=0)
+    surface_azimuth_toitureS2: float = Field(default=0)
+    surface_azimuth_toitureS3: float = Field(default=0)
+    surface_azimuth_toitureS4: float = Field(default=0)
+    surface_azimuth_toitureS5: float = Field(default=0)
+    surface_azimuth_toitureS6: float = Field(default=0)
+
+    surface_tilt_toitureS1: float = Field(default=0)
+    surface_tilt_toitureS2: float = Field(default=0)
+    surface_tilt_toitureS3: float = Field(default=0)
+    surface_tilt_toitureS4: float = Field(default=0)
+    surface_tilt_toitureS5: float = Field(default=0)
+    surface_tilt_toitureS6: float = Field(default=0)
 
     bifac_toitureS1: float = Field(default=0)
     bifac_toitureS2: float = Field(default=0)
@@ -93,19 +106,19 @@ class Configuration(BaseModel):
     bifac_toitureS5: float = Field(default=0)
     bifac_toitureS6: float = Field(default=0)
 
-    bifac_ratio_toitureS1: float = Field(default=0)
-    bifac_ratio_toitureS2: float = Field(default=0)
-    bifac_ratio_toitureS3: float = Field(default=0)
-    bifac_ratio_toitureS4: float = Field(default=0)
-    bifac_ratio_toitureS5: float = Field(default=0)
-    bifac_ratio_toitureS6: float = Field(default=0)
+    bifac_ratio_toitureS1: float = Field(default=1)
+    bifac_ratio_toitureS2: float = Field(default=1)
+    bifac_ratio_toitureS3: float = Field(default=1)
+    bifac_ratio_toitureS4: float = Field(default=1)
+    bifac_ratio_toitureS5: float = Field(default=1)
+    bifac_ratio_toitureS6: float = Field(default=1)
 
-    H_toitureS1: float = Field(default=4)
-    H_toitureS2: float = Field(default=4)
-    H_toitureS3: float = Field(default=4)
-    H_toitureS4: float = Field(default=4)
-    H_toitureS5: float = Field(default=4)
-    H_toitureS6: float = Field(default=4)
+    H_toitureS1: float = Field(default=1)
+    H_toitureS2: float = Field(default=1)
+    H_toitureS3: float = Field(default=1)
+    H_toitureS4: float = Field(default=1)
+    H_toitureS5: float = Field(default=1)
+    H_toitureS6: float = Field(default=1)
 
     inter_toitureS1: float = Field(default=2.5)
     inter_toitureS2: float = Field(default=2.5)
@@ -183,17 +196,17 @@ def calculate_pv():
 
     surfaces_configurations = [
         # Configurations for toiture
-        {"name": "toiture_surface1", "surface": configuration.toiture_surface1, "bifac": configuration.bifac_toitureS1,
+        {"name": "toiture_surface1", "surface": configuration.toiture_surface1,  "surface_azimuth": configuration.surface_azimuth_toitureS1, "surface_tilt": configuration.surface_tilt_toitureS1, "bifac": configuration.bifac_toitureS1,
             "bifac_ratio": configuration.bifac_ratio_toitureS1, "H": configuration.H_toitureS1, "inter": configuration.inter_toitureS1},
-        {"name": "toiture_surface2", "surface": configuration.toiture_surface2, "bifac": configuration.bifac_toitureS2,
+        {"name": "toiture_surface2", "surface": configuration.toiture_surface2,  "surface_azimuth": configuration.surface_azimuth_toitureS2, "surface_tilt": configuration.surface_tilt_toitureS2, "bifac": configuration.bifac_toitureS2,
             "bifac_ratio": configuration.bifac_ratio_toitureS2, "H": configuration.H_toitureS2, "inter": configuration.inter_toitureS2},
-        {"name": "toiture_surface3", "surface": configuration.toiture_surface3, "bifac": configuration.bifac_toitureS3,
+        {"name": "toiture_surface3", "surface": configuration.toiture_surface3,  "surface_azimuth": configuration.surface_azimuth_toitureS3, "surface_tilt": configuration.surface_tilt_toitureS3, "bifac": configuration.bifac_toitureS3,
             "bifac_ratio": configuration.bifac_ratio_toitureS3, "H": configuration.H_toitureS3, "inter": configuration.inter_toitureS3},
-        {"name": "toiture_surface4", "surface": configuration.toiture_surface4, "bifac": configuration.bifac_toitureS4,
+        {"name": "toiture_surface4", "surface": configuration.toiture_surface4,  "surface_azimuth": configuration.surface_azimuth_toitureS4, "surface_tilt": configuration.surface_tilt_toitureS4, "bifac": configuration.bifac_toitureS4,
             "bifac_ratio": configuration.bifac_ratio_toitureS4, "H": configuration.H_toitureS4, "inter": configuration.inter_toitureS4},
-        {"name": "toiture_surface5", "surface": configuration.toiture_surface5, "bifac": configuration.bifac_toitureS5,
+        {"name": "toiture_surface5", "surface": configuration.toiture_surface5,  "surface_azimuth": configuration.surface_azimuth_toitureS5, "surface_tilt": configuration.surface_tilt_toitureS5, "bifac": configuration.bifac_toitureS5,
             "bifac_ratio": configuration.bifac_ratio_toitureS5, "H": configuration.H_toitureS5, "inter": configuration.inter_toitureS5},
-        {"name": "toiture_surface6", "surface": configuration.toiture_surface6, "bifac": configuration.bifac_toitureS6,
+        {"name": "toiture_surface6", "surface": configuration.toiture_surface6,  "surface_azimuth": configuration.surface_azimuth_toitureS6, "surface_tilt": configuration.surface_tilt_toitureS6, "bifac": configuration.bifac_toitureS6,
             "bifac_ratio": configuration.bifac_ratio_toitureS6, "H": configuration.H_toitureS6, "inter": configuration.inter_toitureS6},
         # Configurations for ombrière
         {"name": "ombriere_surface1", "surface": configuration.ombriere_surface1, "surface_azimuth": configuration.surface_azimuth_ombS1,
@@ -462,20 +475,18 @@ def calculate_pv():
 
     result = n_h90_for_config
 
-    P_ac_for_config = pd.DataFrame(P_ac_for_config)
-    P_ac_for_config.index = P_ac_for_config.index.strftime('%Y-%m-%d %H:%M:%S')
+    product_for_config = {config["name"]: P_ac_for_config[config["name"]] * config["surface"]
+                          for config in surfaces_configurations
+                          if config["name"]in P_ac_for_config}
 
-    P_ac_for_config_list = {}
-    for col in P_ac_for_config.columns:
-        P_ac_for_config_list[col] = P_ac_for_config[col].to_dict()
+    product_for_config = pd.concat(P_ac_for_config, axis=1)
+    sum_P_ac_for_config = product_for_config.sum(axis=1)
 
-    for surface in P_ac_for_config_list:
-        P_ac_for_config_list[surface] = list(
-            P_ac_for_config_list[surface].values())
+    sum_P_ac_for_config = sum_P_ac_for_config.tolist()
 
     # data = {'hourly_P_ac': P_ac_for_config, 'result': result, 'gain': gains}
     data = {"result": result, "gain": gains,
-            "hourly_P_ac": P_ac_for_config_list}
+            "hourly_P_ac": sum_P_ac_for_config}
     return jsonify(data)
 
 
