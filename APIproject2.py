@@ -421,12 +421,13 @@ def calculate_pv():
                 P_ac_for_config[config_name] = P_dc_for_config[config_name] * \
                     (1-configuration.inverterloss) * \
                     (1-np.exp((-inverter_load-0.04)/0.04))
+
     ########### **************#############
 
     # Calcul du nombre d'heure
     n_h90 = sum(P_ac)/1000/eta_module*configuration.r_P90  # en kWh/kWc
-    n_h90_for_config = {config["name"]: sum(
-        P_ac_for_config[config["name"]]/1000/eta_module*configuration.r_P90)
+    n_h90_for_config = {config["name"]: round(sum(
+        P_ac_for_config[config["name"]]/1000/eta_module*configuration.r_P90))
         for config in surfaces_configurations
         if "surface_azimuth" in config}
 
@@ -447,28 +448,27 @@ def calculate_pv():
         return 0
 
     gains = {config["name"]: calculate_gain_for_surface(config)
-             for config in surfaces_configurations
-             if 'surface_azimuth' in config}
+             for config in surfaces_configurations}
 
     # Résulta final "nombre d'heur":
     n_h90  # résultat final - nombre d'heures équivalent d'ensoleillement, en kWh/kWc/an
 
-    result = round(n_h90)
-    P_ac_to_list = P_ac.tolist()
+    result = n_h90_for_config
 
-    start_date = datetime(2016, 1, 1)
-    hourly_P_ac = {}
-    for i in range(len(P_ac_to_list)):
-        current_hour = start_date + timedelta(hours=i)
-        key = current_hour.strftime('%d-%m--%H:%M')
-        hourly_P_ac[key] = P_ac_to_list[i]
+    P_ac_for_config = pd.DataFrame(P_ac_for_config)
+    P_ac_for_config.index = P_ac_for_config.index.strftime('%Y-%m-%d %H:%M:%S')
 
-    for key in hourly_P_ac:
-        hourly_P_ac[key] = (hourly_P_ac[key] * configuration.toiture_surface1) + (hourly_P_ac[key] * configuration.toiture_surface2) + (hourly_P_ac[key] * configuration.toiture_surface3) + (hourly_P_ac[key] * configuration.toiture_surface4) + (hourly_P_ac[key] * configuration.toiture_surface5) + (hourly_P_ac[key] * configuration.toiture_surface6) + (hourly_P_ac[key]
-                                                                                                                                                                                                                                                                                                                                                                * configuration.serre_surface1) + (hourly_P_ac[key] * configuration.serre_surface1) + (hourly_P_ac[key] * configuration.serre_surface2) + (hourly_P_ac[key] * configuration.serre_surface3) + (hourly_P_ac[key] * configuration.ombriere_surface1) + (hourly_P_ac[key] * configuration.ombriere_surface2) + (hourly_P_ac[key] * configuration.ombriere_surface3) / 1000
+    P_ac_for_config_list = {}
+    for col in P_ac_for_config.columns:
+        P_ac_for_config_list[col] = P_ac_for_config[col].to_dict()
 
-    data = {'hourly_P_ac': P_ac_to_list, 'result': result, 'gain': gains}
+    for surface in P_ac_for_config_list:
+        P_ac_for_config_list[surface] = list(
+            P_ac_for_config_list[surface].values())
 
+    # data = {'hourly_P_ac': P_ac_for_config, 'result': result, 'gain': gains}
+    data = {"result": result, "gain": gains,
+            "hourly_P_ac": P_ac_for_config_list}
     return jsonify(data)
 
 

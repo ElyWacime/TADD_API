@@ -406,11 +406,14 @@ for config in surfaces_configurations:
 # Calcul du nombre d'heure
 n_h90 = sum(P_ac)/1000/eta_module*r_P90  # en kWh/kWc
 
-n_h90_for_config = {config["name"]: sum(
-    P_ac_for_config[config["name"]]/1000/eta_module*r_P90)
+n_h90_for_config = {config["name"]: round(sum(
+    P_ac_for_config[config["name"]]/1000/eta_module*r_P90))
     for config in surfaces_configurations
     if "surface_azimuth" in config}
-print(n_h90_for_config)
+
+"""P_ac_for_config = pd.DataFrame(P_ac_for_config)
+P_ac_for_config = P_ac_for_config.to_dict()"""
+print(P_ac_for_config)
 
 
 def gain_bifac(bifac, bifac_ratio, H, inter):
