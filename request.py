@@ -2,9 +2,8 @@ import requests
 import json
 
 configuration_data = {
-    "long": 23.5,
-    "lat": 10.0,
-    "serre_surface1": 150.25
+    "long": -1.0285,
+    "lat": 43.5161,
 }
 
 api_endpoint = 'http://127.0.0.1:5000/calculate_pv'

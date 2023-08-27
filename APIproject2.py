@@ -41,8 +41,10 @@ class Configuration(BaseModel):
     ombriere_surface2: float = Field(default=0)
     ombriere_surface3: float = Field(default=0)
 
+    module_eff: float = Field(default=0.2)
+
     # Surface Azimuth (deg)
-    surface_azimuth: float = Field(default=180)
+    surface_azimuth: float = Field(default=0)
 
     # Surface tilt (deg)
     surface_tilt: float = Field(default=0)
@@ -69,8 +71,8 @@ class Configuration(BaseModel):
     # DC losses
     mismatch: float = Field(default=0.02)  # DEFAUT = 0.02
     connections: float = Field(default=0.005)  # DEFAUT = 0.005
-    DCwiring: float = Field(default=0.02)  # DEFAUT = 0.02
-    inverterloss: float = Field(default=0.035)  # DEFAUT = 0.035
+    DCwiring: float = Field(default=0.015)  # DEFAUT = 0.02
+    inverterloss: float = Field(default=0.015)  # DEFAUT = 0.035
     inverter_min: float = Field(default=0.01)  # DEFAUT = 0.01
 
     # AC losses
@@ -106,19 +108,19 @@ class Configuration(BaseModel):
     bifac_toitureS5: float = Field(default=0)
     bifac_toitureS6: float = Field(default=0)
 
-    bifac_ratio_toitureS1: float = Field(default=1)
-    bifac_ratio_toitureS2: float = Field(default=1)
-    bifac_ratio_toitureS3: float = Field(default=1)
-    bifac_ratio_toitureS4: float = Field(default=1)
-    bifac_ratio_toitureS5: float = Field(default=1)
-    bifac_ratio_toitureS6: float = Field(default=1)
+    bifac_ratio_toitureS1: float = Field(default=0.65)
+    bifac_ratio_toitureS2: float = Field(default=0.65)
+    bifac_ratio_toitureS3: float = Field(default=0.65)
+    bifac_ratio_toitureS4: float = Field(default=0.65)
+    bifac_ratio_toitureS5: float = Field(default=0.65)
+    bifac_ratio_toitureS6: float = Field(default=0.65)
 
-    H_toitureS1: float = Field(default=1)
-    H_toitureS2: float = Field(default=1)
-    H_toitureS3: float = Field(default=1)
-    H_toitureS4: float = Field(default=1)
-    H_toitureS5: float = Field(default=1)
-    H_toitureS6: float = Field(default=1)
+    H_toitureS1: float = Field(default=4)
+    H_toitureS2: float = Field(default=4)
+    H_toitureS3: float = Field(default=4)
+    H_toitureS4: float = Field(default=4)
+    H_toitureS5: float = Field(default=4)
+    H_toitureS6: float = Field(default=4)
 
     inter_toitureS1: float = Field(default=2.5)
     inter_toitureS2: float = Field(default=2.5)
@@ -131,9 +133,9 @@ class Configuration(BaseModel):
     surface_tilt_ombS2: float = Field(default=0)
     surface_tilt_ombS3: float = Field(default=0)
 
-    surface_azimuth_ombS1: float = Field(default=180)
-    surface_azimuth_ombS2: float = Field(default=180)
-    surface_azimuth_ombS3: float = Field(default=180)
+    surface_azimuth_ombS1: float = Field(default=0)
+    surface_azimuth_ombS2: float = Field(default=0)
+    surface_azimuth_ombS3: float = Field(default=0)
 
     bifac_ombS1: float = Field(default=0)
     bifac_ombS2: float = Field(default=0)
@@ -155,9 +157,9 @@ class Configuration(BaseModel):
     surface_tilt_serS2: float = Field(default=0)
     surface_tilt_serS3: float = Field(default=0)
 
-    surface_azimuth_serS1: float = Field(default=180)
-    surface_azimuth_serS2: float = Field(default=180)
-    surface_azimuth_serS3: float = Field(default=180)
+    surface_azimuth_serS1: float = Field(default=0)
+    surface_azimuth_serS2: float = Field(default=0)
+    surface_azimuth_serS3: float = Field(default=0)
 
     bifac_serS1: float = Field(default=0)
     bifac_serS2: float = Field(default=0)
@@ -430,24 +432,25 @@ def calculate_pv():
         if "surface_azimuth" in config and single_res_for_config[config_name] is not None:
             P_dc_for_config[config_name] = single_res_for_config[config_name]['p_mp']*(
                 1-configuration.mismatch)*(1-configuration.connections)*(1-configuration.DCwiring)/module_area
-            
+
             P_dc_for_config[config_name].loc[P_dc_for_config[config_name] <= 0] = 0
-            
+
             P_ac_for_config[config_name] = P_dc_for_config[config_name] * \
-                (1-configuration.inverterloss)*(1-np.exp((-inverter_load-0.04)/0.04))
-            P_ac_for_config[config_name].loc[P_ac_for_config[config_name] \
-                                             < configuration.inverter_min*eta_module*1000/configuration.r_DCAC \
-                                                *(1-configuration.ACwiring)]=0
-            P_ac_for_config[config_name].loc[P_ac_for_config[config_name]\
-                                              > eta_module*1000/configuration.r_DCAC] \
-                                                = eta_module*1000/configuration.r_DCAC
+                (1-configuration.inverterloss) * \
+                (1-np.exp((-inverter_load-0.04)/0.04))
+            P_ac_for_config[config_name].loc[P_ac_for_config[config_name]
+                                             < configuration.inverter_min*eta_module*1000/configuration.r_DCAC
+                                             * (1-configuration.ACwiring)] = 0
+            P_ac_for_config[config_name].loc[P_ac_for_config[config_name]
+                                             > eta_module*1000/configuration.r_DCAC] \
+                = eta_module*1000/configuration.r_DCAC
 
     ########### **************#############
 
     # Calcul du nombre d'heure
     n_h90 = sum(P_ac)/1000/eta_module*configuration.r_P90  # en kWh/kWc
-    n_h90_for_config = {config["name"]: round(sum(
-        P_ac_for_config[config["name"]]/1000/eta_module*configuration.r_P90))
+    n_h90_for_config = {config["name"]: (sum(
+        P_ac_for_config[config["name"]]/1000/eta_module*configuration.r_P90*(configuration.module_eff/eta_module)))
         for config in surfaces_configurations
         if "surface_azimuth" in config}
 
@@ -473,11 +476,9 @@ def calculate_pv():
     # Résulta final "nombre d'heur":
     n_h90  # résultat final - nombre d'heures équivalent d'ensoleillement, en kWh/kWc/an
 
-    result = n_h90_for_config
-
     product_for_config = {config["name"]: P_ac_for_config[config["name"]] * config["surface"]
                           for config in surfaces_configurations
-                          if config["name"]in P_ac_for_config}
+                          if config["name"] in P_ac_for_config}
 
     product_for_config = pd.concat(P_ac_for_config, axis=1)
     sum_P_ac_for_config = product_for_config.sum(axis=1)
@@ -485,9 +486,9 @@ def calculate_pv():
     sum_P_ac_for_config = sum_P_ac_for_config.tolist()
 
     # data = {'hourly_P_ac': P_ac_for_config, 'result': result, 'gain': gains}
-    data = {"result": result, "gain": gains,
+    data = {"result": n_h90_for_config, "gain": gains,
             "hourly_P_ac": sum_P_ac_for_config}
-    return jsonify(data)
+    return jsonify(n_h90_for_config)
 
 
 if __name__ == '__main__':

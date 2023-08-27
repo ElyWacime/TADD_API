@@ -39,6 +39,9 @@ rho = 0.2  # DEFAUT = 0.2
 # Soiling losses
 soiling = 0.03  # DEFAUT = 0.03
 
+# Module efficiency
+module_eff = 0.20  # Default 20%
+
 # DC losses
 mismatch = 0.02  # DEFAUT = 0.02
 connections = 0.005  # DEFAUT = 0.005
@@ -400,36 +403,35 @@ for config in surfaces_configurations:
         if single_res_for_config[config_name] is not None:
             P_dc_for_config[config_name] = single_res_for_config[config_name]['p_mp']*(
                 1-mismatch)*(1-connections)*(1-DCwiring)/module_area
-            
+
             P_dc_for_config[config_name].loc[P_dc_for_config[config_name] <= 0] = 0
-            
+
             P_ac_for_config[config_name] = P_dc_for_config[config_name] * \
                 (1-inverterloss)*(1-np.exp((-inverter_load-0.04)/0.04))
-            P_ac_for_config[config_name].loc[P_ac_for_config[config_name] \
-                                             < inverter_min*eta_module*1000/r_DCAC*(1-ACwiring)]=0
-            P_ac_for_config[config_name].loc[P_ac_for_config[config_name]\
-                                              > eta_module*1000/r_DCAC] = eta_module*1000/r_DCAC
+            P_ac_for_config[config_name].loc[P_ac_for_config[config_name]
+                                             < inverter_min*eta_module*1000/r_DCAC*(1-ACwiring)] = 0
+            P_ac_for_config[config_name].loc[P_ac_for_config[config_name]
+                                             > eta_module*1000/r_DCAC] = eta_module*1000/r_DCAC
 
 product_for_config = {config["name"]: P_ac_for_config[config["name"]] * config["surface"]
-                    for config in surfaces_configurations
-                    if config["name"]in P_ac_for_config}
-                
+                      for config in surfaces_configurations
+                      if config["name"] in P_ac_for_config}
+
 product_for_config = pd.concat(P_ac_for_config, axis=1)
 sum_P_ac_for_config = product_for_config.sum(axis=1)
-print(sum_P_ac_for_config)
+
 
 ########### **************#############
 # Calcul du nombre d'heure
 n_h90 = sum(P_ac)/1000/eta_module*r_P90  # en kWh/kWc
 
-n_h90_for_config = {config["name"]: round(sum(
-    P_ac_for_config[config["name"]]/1000/eta_module*r_P90))
+n_h90_for_config = {config["name"]: (sum(
+    P_ac_for_config[config["name"]]/1000/eta_module*r_P90*(module_eff/eta_module)))
     for config in surfaces_configurations
     if "surface_azimuth" in config}
 
 """P_ac_for_config = pd.DataFrame(P_ac_for_config)
 P_ac_for_config = P_ac_for_config.to_dict()"""
-
 
 
 def gain_bifac(bifac, bifac_ratio, H, inter):
@@ -438,5 +440,5 @@ def gain_bifac(bifac, bifac_ratio, H, inter):
 
 gain = gain_bifac(bifac, bifac_ratio, H, inter)
 
-
+print(n_h90_for_config)
 # n_h90 #résultat final - nombre d'heures équivalent d'ensoleillement, en kWh/kWc/an
