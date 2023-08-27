@@ -440,5 +440,5 @@ def gain_bifac(bifac, bifac_ratio, H, inter):
 
 gain = gain_bifac(bifac, bifac_ratio, H, inter)
 
-print(n_h90_for_config)
+print(type(IAM_for_config))
 # n_h90 #résultat final - nombre d'heures équivalent d'ensoleillement, en kWh/kWc/an
