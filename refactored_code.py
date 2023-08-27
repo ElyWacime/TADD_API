@@ -171,8 +171,8 @@ def calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config(effective_irr_for_c
             config_name = config["name"]
             if "surface_azimuth" in config:
                 if effective_irr_for_config[config_name] is not None:
-                    IL_for_config[config_name], I0_for_config[config_name], Rs_for_config[config_name], Rsh_for_config[config_name], nNsVth_for_config[config_name] =\
-                        pvlib.pvsystem.calcparams_desoto(
+                    IL_for_config[config_name], I0_for_config[config_name], Rs_for_config[config_name], Rsh_for_config[config_name],\
+                        nNsVth_for_config[config_name] = pvlib.pvsystem.calcparams_desoto(
                         effective_irradiance=effective_irr_for_config[
                             config_name], temp_cell=Tcell_for_config[config_name], alpha_sc=module_parameters['alpha_sc'],
                         a_ref=module_parameters['a_ref'], I_L_ref=module_parameters['I_L_ref'],
@@ -204,7 +204,8 @@ def calculate_single_res_for_config(IL_for_config, I0_for_config,
             ivcurve_pnts=None,
             method='lambertw')
             for config in surfaces_configurations
-            if "surface_azimuth" in config and IL_for_config is not None and I0_for_config is not None and Rs_for_config is not None and Rsh_for_config is not None and nNsVth_for_config is not None}
+            if "surface_azimuth" in config and IL_for_config is not None and I0_for_config is not None and Rs_for_config
+            is not None and Rsh_for_config is not None and nNsVth_for_config is not None}
     except KeyError as e:
         print(f"Missing key: {e}")
         return None

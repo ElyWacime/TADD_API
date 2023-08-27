@@ -214,7 +214,6 @@ dni_extra = pvlib.irradiance.get_extra_radiation(
     times, solar_constant=1366.1, method='spencer', epoch_year=2023)
 AM = pvlib.atmosphere.get_relative_airmass(
     zenith=sp['zenith'], model='kastenyoung1989')
-# Calcul de la radiation globale et de ses composantes selon le modèle de PEREZ et la librairie pvlib
 
 Itot_for_config = calculate_Itot_for_config(solar_zenith=solar_zenith,
                                             solar_azimuth=solar_azimuth,
@@ -249,3 +248,4 @@ single_res_for_config = calculate_single_res_for_config(IL_for_config=IL_for_con
                                                         Rs_for_config=Rs_for_config, Rsh_for_config=Rsh_for_config,
                                                         nNsVth_for_config=nNsVth_for_config,
                                                         surfaces_configurations=surfaces_configurations)
+print(single_res_for_config)
