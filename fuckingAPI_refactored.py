@@ -1,4 +1,3 @@
-from refactored_code import get_material_properties, calculate_losses, get_geographical_data, get_other_parameters
 from pvlib import location
 import pandas as pd
 import numpy as np
@@ -8,6 +7,10 @@ from pydantic import BaseModel, Field
 import logging
 from logging.handlers import RotatingFileHandler
 from datetime import datetime, timedelta
+from refactored_code import calculate_n_h90_for_config
+from refactored_code import calculate_P_ac_for_config, calculate_inverter_load_for_config
+from refactored_code import calculate_P_dc_for_config
+from refactored_code import modules, module_parameters, module_area, eta_module, calculate_single_res_for_config, calculate_Itot_for_config, calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config, calculate_WS5m_and_Ta_and_Tcell_for_config, calculate_effactive_irr_for_config, calculate_IAM_for_config, calculate_AOI_for_config, calculate_TMY_global_for_config
 
 
 app = Flask(__name__)
@@ -177,6 +180,7 @@ def calculate_pv():
     TMY_data.set_index(TMY_data.index.tz_localize(None),
                        inplace=True, drop=True)
     TMY_global = TMY_data
+    Ta = TMY_global['T2m'].values
     surfaces_configurations = [
         # Configurations for toiture
         {"name": "toiture_surface1", "surface": configuration.toiture_surface1, "bifac": configuration.bifac_toitureS1,
@@ -225,6 +229,60 @@ def calculate_pv():
         times, solar_constant=1366.1, method='spencer', epoch_year=2023)
     AM = pvlib.atmosphere.get_relative_airmass(
         zenith=sp['zenith'], model='kastenyoung1989')
+
+    Itot_for_config = calculate_Itot_for_config(solar_zenith=solar_zenith,
+                                                solar_azimuth=solar_azimuth,
+                                                dni=dni, ghi=ghi, dhi=dhi, dni_extra=dni_extra,
+                                                AM=AM, rho=configuration.rho,
+                                                surfaces_configurations=surfaces_configurations)
+
+    AOI_for_config = calculate_AOI_for_config(solar_zenith=solar_zenith, solar_azimuth=solar_azimuth,
+                                              surfaces_configurations=surfaces_configurations)
+
+    IAM_for_config = calculate_IAM_for_config(AOI_for_config=AOI_for_config,
+                                              n=configuration.n, K=configuration.K, L=configuration.L,
+                                              surfaces_configurations=surfaces_configurations)
+
+    TMY_global_for_config = calculate_TMY_global_for_config(TMY_global=TMY_global,
+                                                            Itot_for_config=Itot_for_config,
+                                                            IAM_for_config=IAM_for_config,
+                                                            surfaces_configurations=surfaces_configurations)
+
+    effective_irr_for_config = calculate_effactive_irr_for_config(TMY_global_for_config=TMY_global_for_config,
+                                                                  soiling=configuration.soiling, surfaces_configurations=surfaces_configurations)
+    (WS5m_for_config, Ta_for_config, Tcell_for_config) = calculate_WS5m_and_Ta_and_Tcell_for_config(TMY_global_for_config=TMY_global_for_config,
+                                                                                                    effective_irr_for_config=effective_irr_for_config,
+                                                                                                    a=configuration.a, b=configuration.b, deltaT=configuration.deltaT,
+                                                                                                    surfaces_configurations=surfaces_configurations)
+
+    (IL_for_config, I0_for_config, Rs_for_config, Rsh_for_config, nNsVth_for_config) = calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config(effective_irr_for_config=effective_irr_for_config,
+                                                                                                                                                Tcell_for_config=Tcell_for_config,
+                                                                                                                                                module_parameters=module_parameters,
+                                                                                                                                                surfaces_configurations=surfaces_configurations)
+    single_res_for_config = calculate_single_res_for_config(IL_for_config=IL_for_config, I0_for_config=I0_for_config,
+                                                            Rs_for_config=Rs_for_config, Rsh_for_config=Rsh_for_config,
+                                                            nNsVth_for_config=nNsVth_for_config,
+                                                            surfaces_configurations=surfaces_configurations)
+    P_dc_for_config = calculate_P_dc_for_config(single_res_for_config=single_res_for_config,
+                                                mismatch=configuration.mismatch, connections=configuration.connections,
+                                                DCwiring=configuration.DCwiring, module_area=module_area,
+                                                surfaces_configurations=surfaces_configurations)
+
+    inverter_load_for_config = calculate_inverter_load_for_config(P_dc_for_config=P_dc_for_config,
+                                                                  eta_module=eta_module,
+                                                                  r_DCAC=configuration.r_DCAC, inverterloss=configuration.inverterloss,
+                                                                  surfaces_configurations=surfaces_configurations)
+    P_ac_for_config = calculate_P_ac_for_config(inverterloss=configuration.inverterloss, P_dc_for_config=P_dc_for_config,
+                                                inverter_load_for_config=inverter_load_for_config,
+                                                surfaces_configurations=surfaces_configurations)
+
+    n_h90_for_config = calculate_n_h90_for_config(P_ac_for_config=P_ac_for_config, r_P90=configuration.r_P90,
+                                                  eta_module=eta_module, module_eff=configuration.module_eff,
+                                                  surfaces_configurations=surfaces_configurations,
+                                                  bifac=configuration.bifac, bifac_ratio=configuration.bifac_ratio, H=configuration.H, inter=configuration.inter,
+                                                  rho=configuration.rho)
+
+    return jsonify(n_h90_for_config)
 
 
 if __name__ == '__main__':
