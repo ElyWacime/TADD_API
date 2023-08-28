@@ -1,9 +1,14 @@
+from refactored_code import calculate_n_h90_for_config
+from refactored_code import calculate_P_ac_for_config, calculate_inverter_load_for_config
+from refactored_code import calculate_P_dc_for_config
 from refactored_code import modules, module_parameters, module_area, eta_module, calculate_single_res_for_config, calculate_Itot_for_config, calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config, calculate_WS5m_and_Ta_and_Tcell_for_config, calculate_effactive_irr_for_config, calculate_IAM_for_config, calculate_AOI_for_config, calculate_TMY_global_for_config
 from pvlib import location
 import pandas as pd
 import numpy as np
 import pvlib
 from pprint import pprint
+
+
 lat = 43.5161  # Coordonées du projet
 long = -1.0285
 # La librairie PVLib possède une fonction qui pemet de récupérer les données PVGIS via son API
@@ -14,9 +19,9 @@ TMY_data = TMY_data[0]
 # Remove time zone to save data in excel
 TMY_data.set_index(TMY_data.index.tz_localize(None), inplace=True, drop=True)
 TMY_global = TMY_data  # Les données météo sont stockées dans la dataframe TMY_global
-
+Ta = TMY_global['T2m'].values
 # Surface Azimuth (deg)
-surface_azimuth = 180
+surface_azimuth = 0
 
 # Surface tilt (deg)
 surface_tilt = 0
@@ -248,4 +253,23 @@ single_res_for_config = calculate_single_res_for_config(IL_for_config=IL_for_con
                                                         Rs_for_config=Rs_for_config, Rsh_for_config=Rsh_for_config,
                                                         nNsVth_for_config=nNsVth_for_config,
                                                         surfaces_configurations=surfaces_configurations)
-print(single_res_for_config)
+P_dc_for_config = calculate_P_dc_for_config(single_res_for_config=single_res_for_config,
+                                            mismatch=mismatch, connections=connections,
+                                            DCwiring=DCwiring, module_area=module_area,
+                                            surfaces_configurations=surfaces_configurations)
+
+inverter_load_for_config = calculate_inverter_load_for_config(P_dc_for_config=P_dc_for_config,
+                                                              eta_module=eta_module,
+                                                              r_DCAC=r_DCAC, inverterloss=inverterloss,
+                                                              surfaces_configurations=surfaces_configurations)
+P_ac_for_config = calculate_P_ac_for_config(inverterloss=inverterloss, P_dc_for_config=P_dc_for_config,
+                                            inverter_load_for_config=inverter_load_for_config,
+                                            surfaces_configurations=surfaces_configurations)
+
+n_h90_for_config = calculate_n_h90_for_config(P_ac_for_config=P_ac_for_config, r_P90=r_P90,
+                                              eta_module=eta_module, module_eff=module_eff,
+                                              surfaces_configurations=surfaces_configurations,
+                                              bifac=bifac, bifac_ratio=bifac_ratio, H=H, inter=inter,
+                                              rho=rho)
+
+print(n_h90_for_config)

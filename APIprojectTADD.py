@@ -1,3 +1,4 @@
+from refactored_code import calculate_single_res_for_config
 from pvlib import location
 import pandas as pd
 import numpy as np
@@ -373,7 +374,7 @@ single_res = pvlib.pvsystem.singlediode(photocurrent=IL,
                                         nNsVth=nNsVth,
                                         ivcurve_pnts=None,
                                         method='lambertw')
-single_res_for_config = {}
+"""single_res_for_config = {}
 for config in surfaces_configurations:
     config_name = config["name"]
     if "surface_azimuth" in config:
@@ -384,9 +385,15 @@ for config in surfaces_configurations:
                                                                             resistance_shunt=Rsh_for_config[config_name],
                                                                             nNsVth=nNsVth,
                                                                             ivcurve_pnts=None,
-                                                                            method='lambertw')
+                                                                            method='lambertw')"""
 ############# ****************##############
-
+single_res_for_config = calculate_single_res_for_config(I0_for_config=I0_for_config,
+                                                        IL_for_config=IL_for_config,
+                                                        Rs_for_config=Rs_for_config,
+                                                        Rsh_for_config=Rsh_for_config,
+                                                        nNsVth_for_config=nNsVth_for_config,
+                                                        surfaces_configurations=surfaces_configurations)
+print(single_res_for_config)
 # Calcul de la sortie AC selon la fonction de l'onduleur dévelopée par EnerVivo
 P_dc = single_res['p_mp']*(1-mismatch)*(1-connections)*(1-DCwiring)/module_area
 P_dc[P_dc <= 0] = 0
@@ -440,5 +447,5 @@ def gain_bifac(bifac, bifac_ratio, H, inter):
 
 gain = gain_bifac(bifac, bifac_ratio, H, inter)
 
-print(type(IAM_for_config))
+
 # n_h90 #résultat final - nombre d'heures équivalent d'ensoleillement, en kWh/kWc/an

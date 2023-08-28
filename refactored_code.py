@@ -4,6 +4,13 @@ import pvlib
 import numpy as np
 
 
+modules = pvlib.pvsystem.retrieve_sam('cecmod')
+module_parameters = modules['Canadian_Solar_Inc__CS1U_410MS']
+module_area = 2.078*0.992
+eta_module = module_parameters['I_mp_ref'] * \
+    module_parameters['V_mp_ref']/(module_area*1000)
+
+
 def calculate_Itot_for_config(solar_zenith: float, solar_azimuth: float,
                               dni: float, ghi: float, dhi: float,
                               dni_extra: float, AM: float, rho: float,
@@ -33,7 +40,7 @@ def calculate_Itot_for_config(solar_zenith: float, solar_azimuth: float,
 def calculate_AOI_for_config(solar_zenith: float, solar_azimuth: float,
                              surfaces_configurations: list[dict]) -> dict:
     try:
-        result = {config["name"]: pd.DataFrame(pvlib.irradiance.aoi(
+        result = {config["name"]: (pvlib.irradiance.aoi(
             config["surface_tilt"], config["surface_azimuth"],
             solar_zenith, solar_azimuth))
             for config in surfaces_configurations
@@ -51,9 +58,9 @@ def calculate_AOI_for_config(solar_zenith: float, solar_azimuth: float,
 
 
 def calculate_IAM_for_config(AOI_for_config: dict, n: float, K: float,
-                             L: float, surfaces_configurations: dict) -> dict:
+                             L: float, surfaces_configurations: list[dict]) -> dict:
     try:
-        IAM_for_config = {config["name"]: pd.DataFrame(pvlib.iam.physical(
+        IAM_for_config = {config["name"]: (pvlib.iam.physical(
             AOI_for_config[config["name"]], n, K, L
         ))
             for config in surfaces_configurations
@@ -78,21 +85,14 @@ def calculate_TMY_global_for_config(TMY_global: pd.DataFrame,
             if "surface_azimuth" in config:
                 TMY_global_for_config[config["name"]] = TMY_global
                 if config_name in Itot_for_config and config_name in TMY_global_for_config:
-                    if Itot_for_config[config_name] is not None:
-                        TMY_global_for_config[config_name]['I(b)'] = Itot_for_config[config_name]['poa_direct'].values
-                        TMY_global_for_config[config_name]['I(d)'] = Itot_for_config[config_name][
-                            'poa_sky_diffuse'].values
-                        TMY_global_for_config[config_name]['I(r)'] = Itot_for_config[config_name][
-                            'poa_ground_diffuse'].values
-
-                        TMY_global_for_config[config_name] = TMY_global_for_config[config_name].reset_index(
-                            drop=True)  # reset the index to integer
-
-                        IAM_series = IAM_for_config[config_name].\
-                            squeeze()  # transforming IAM_for_config into series
-                        TMY_global_for_config[config_name]['Itot0'] = IAM_series*(TMY_global_for_config[config_name]['I(b)']
-                                                                                  + TMY_global_for_config[config_name]['I(d)']
-                                                                                  + TMY_global_for_config[config_name]['I(r)'])
+                    TMY_global_for_config[config_name]['I(b)'] = Itot_for_config[config_name]['poa_direct'].values
+                    TMY_global_for_config[config_name]['I(d)'] = Itot_for_config[config_name][
+                        'poa_sky_diffuse'].values
+                    TMY_global_for_config[config_name]['I(r)'] = Itot_for_config[config_name][
+                        'poa_ground_diffuse'].values
+                    TMY_global_for_config[config_name]['Itot0'] = IAM_for_config[config_name]*(TMY_global_for_config[config_name]['I(b)']
+                                                                                               + TMY_global_for_config[config_name]['I(d)']
+                                                                                               + TMY_global_for_config[config_name]['I(r)'])
 
     except KeyError as e:
         print(f"Missing key: {e}")
@@ -106,9 +106,9 @@ def calculate_TMY_global_for_config(TMY_global: pd.DataFrame,
 
 def calculate_effactive_irr_for_config(TMY_global_for_config: dict,
                                        soiling: float,
-                                       surfaces_configurations: dict) -> dict:
+                                       surfaces_configurations: list[dict]) -> dict:
     try:
-        effective_irr_for_config = {config["name"]: TMY_global_for_config[config["name"]]['Itot0']*(1-soiling)
+        effective_irr_for_config = {config["name"]: (TMY_global_for_config[config["name"]]['Itot0']*(1-soiling))
                                     for config in surfaces_configurations
                                     if config["name"] in TMY_global_for_config}
     except KeyError as e:
@@ -123,7 +123,7 @@ def calculate_effactive_irr_for_config(TMY_global_for_config: dict,
 def calculate_WS5m_and_Ta_and_Tcell_for_config(TMY_global_for_config: dict,
                                                effective_irr_for_config: dict,
                                                a: float, b: float, deltaT: float,
-                                               surfaces_configurations: dict) -> tuple:
+                                               surfaces_configurations: list[dict]):
     WS5m_for_config = {}
     Ta_for_config = {}
     Tcell_for_config = {}
@@ -131,14 +131,15 @@ def calculate_WS5m_and_Ta_and_Tcell_for_config(TMY_global_for_config: dict,
         for config in surfaces_configurations:
             config_name = config["name"]
             if config_name in TMY_global_for_config and config_name in effective_irr_for_config:
-                Ta_for_config[config_name] = TMY_global_for_config[config_name]['T2m']
+                Ta_for_config[config_name] = TMY_global_for_config[config_name]['T2m'].values
                 TMY_global_for_config[config_name]["WS5m"] = TMY_global_for_config[config_name]["WS10m"].values*(
                     0.5**(0.23))
-                WS5m_for_config[config_name] = TMY_global_for_config[config_name]["WS5m"]
-                TMY_global_for_config[config_name]['Tc'] = (effective_irr_for_config[config_name] *
-                                                            np.exp((a+b*WS5m_for_config[config_name])+Ta_for_config[config_name] +
-                                                                   effective_irr_for_config[config_name]/1000*deltaT))
-                Tcell_for_config[config_name] = TMY_global_for_config[config_name]['Tc']
+                WS5m_for_config[config_name] = TMY_global_for_config[config_name]["WS5m"].values
+                Ta_for_config[config_name] = TMY_global_for_config[config_name]['T2m'].values
+                TMY_global_for_config[config_name]['Tc'] = effective_irr_for_config[config_name] *\
+                    np.exp(a+b*WS5m_for_config[config_name])+Ta_for_config[config_name] +\
+                    effective_irr_for_config[config_name]/1000*deltaT
+                Tcell_for_config[config_name] = TMY_global_for_config[config_name]['Tc'].values
 
     except KeyError as e:
         print(f"Missing_key: {e}")
@@ -150,17 +151,10 @@ def calculate_WS5m_and_Ta_and_Tcell_for_config(TMY_global_for_config: dict,
     return (WS5m_for_config, Ta_for_config, Tcell_for_config)
 
 
-modules = pvlib.pvsystem.retrieve_sam('cecmod')
-module_parameters = modules['Canadian_Solar_Inc__CS1U_410MS']
-module_area = 2.078*0.992
-eta_module = module_parameters['I_mp_ref'] * \
-    module_parameters['V_mp_ref']/(module_area*1000)
-
-
 def calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config(effective_irr_for_config: dict,
                                                              Tcell_for_config: dict,
                                                              module_parameters,
-                                                             surfaces_configurations: dict):
+                                                             surfaces_configurations: list[dict]):
     IL_for_config = {}
     I0_for_config = {}
     Rs_for_config = {}
@@ -171,8 +165,7 @@ def calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config(effective_irr_for_c
             config_name = config["name"]
             if "surface_azimuth" in config:
                 if effective_irr_for_config[config_name] is not None:
-                    IL_for_config[config_name], I0_for_config[config_name], Rs_for_config[config_name], Rsh_for_config[config_name],\
-                        nNsVth_for_config[config_name] = pvlib.pvsystem.calcparams_desoto(
+                    IL_for_config[config_name], I0_for_config[config_name], Rs_for_config[config_name], Rsh_for_config[config_name], nNsVth_for_config[config_name] = pvlib.pvsystem.calcparams_desoto(
                         effective_irradiance=effective_irr_for_config[
                             config_name], temp_cell=Tcell_for_config[config_name], alpha_sc=module_parameters['alpha_sc'],
                         a_ref=module_parameters['a_ref'], I_L_ref=module_parameters['I_L_ref'],
@@ -193,7 +186,7 @@ def calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config(effective_irr_for_c
 def calculate_single_res_for_config(IL_for_config, I0_for_config,
                                     Rs_for_config, Rsh_for_config,
                                     nNsVth_for_config,
-                                    surfaces_configurations: dict):
+                                    surfaces_configurations: list[dict]):
     try:
         single_res_for_config = {config["name"]: pvlib.pvsystem.singlediode(photocurrent=IL_for_config[config["name"]],
                                                                             saturation_current=I0_for_config[
@@ -213,3 +206,108 @@ def calculate_single_res_for_config(IL_for_config, I0_for_config,
         print(f"Error accured: {e}")
         return None
     return single_res_for_config
+
+
+def calculate_P_dc_for_config(single_res_for_config: Dict[str, any],
+                              mismatch: float,
+                              connections: float,
+                              DCwiring: float,
+                              module_area: float,
+                              surfaces_configurations: List[Dict]) -> Dict[str, any]:
+    try:
+        P_dc_for_config = {
+            config["name"]: single_res_for_config[config["name"]
+                                                  ]['p_mp'] * (1 - mismatch) * (1-connections) * (1 - DCwiring) / module_area
+            for config in surfaces_configurations
+            if "surface_azimuth" in config
+        }
+
+        for config in surfaces_configurations:
+            if "surface_azimuth" in config:
+                series = P_dc_for_config[config["name"]]
+                if isinstance(series, (pd.Series, np.ndarray, list)):
+                    series[series <= 0] = 0
+                else:
+                    P_dc_for_config[config["name"]] = max(
+                        0, series)
+
+    except KeyError as e:
+        print(f"Missing Key: {e}")
+        return None
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return None
+    return P_dc_for_config
+
+
+def calculate_inverter_load_for_config(P_dc_for_config: dict,
+                                       eta_module: float,
+                                       r_DCAC: float,
+                                       inverterloss: float,
+                                       surfaces_configurations: list[dict]):
+    try:
+        inverter_load_for_config = {config["name"]: P_dc_for_config[config["name"]]/(eta_module*1000)/r_DCAC/(1-inverterloss)
+                                    for config in surfaces_configurations
+                                    if "surface_azimuth" in config}
+
+    except KeyError as e:
+        print(f"Missing Key: {e}")
+        return None
+    except Exception as e:
+        print(f"Error accured: {e}")
+        return None
+    return inverter_load_for_config
+
+
+def calculate_P_ac_for_config(P_dc_for_config: dict,
+                              inverterloss: float,
+                              inverter_load_for_config: dict,
+                              surfaces_configurations: list[dict]):
+    try:
+        P_ac_for_config = {config["name"]: P_dc_for_config[config["name"]]*(1-inverterloss)*(1-np.exp((-inverter_load_for_config[config["name"]]-0.04)/0.04))
+                           for config in surfaces_configurations
+                           if "surface_azimuth" in config}
+
+    except KeyError as e:
+        print(f"Missing key: {e}")
+        return None
+    except Exception as e:
+        print(f"Error accured: {e}")
+        return None
+    return P_ac_for_config
+
+
+def gain_bifac(bifac, bifac_ratio, H, inter, rho):
+    if bifac == 0:
+        return 0
+    else:
+        return rho*bifac*(1.037*(1-1/(np.sqrt(inter)))*(1-np.exp(-(8.691-H)/inter))+0.125*(1-1/inter**4))
+
+
+def calculate_n_h90_for_config(P_ac_for_config: dict,
+                               eta_module: float,
+                               r_P90: float,
+                               module_eff: float,
+                               bifac: float,
+                               bifac_ratio: float,
+                               H: float,
+                               inter: float,
+                               rho: float,
+                               surfaces_configurations: list[dict]) -> dict:
+    try:
+        n_h90_for_config = {config["name"]: sum(P_ac_for_config[config["name"]])/1000/eta_module *
+                            r_P90*(module_eff/eta_module)
+                            for config in surfaces_configurations
+                            if "surface_azimuth" in config}
+        gain = gain_bifac(bifac=bifac, bifac_ratio=bifac_ratio, H=H,
+                          inter=inter, rho=rho)
+        n_h90_for_config = {config["name"]: n_h90_for_config[config["name"]]*(1+gain)
+                            for config in surfaces_configurations
+                            if "surface_azimuth" in config}
+    except KeyError as e:
+        print(f"Missing Key: {e}")
+        return None
+    except Exception as e:
+        print(f"Error accured: {e}")
+        return None
+    return n_h90_for_config
