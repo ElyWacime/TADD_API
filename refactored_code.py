@@ -14,7 +14,7 @@ eta_module = module_parameters['I_mp_ref'] * \
 def calculate_Itot_for_config(solar_zenith: float, solar_azimuth: float,
                               dni: float, ghi: float, dhi: float,
                               dni_extra: float, AM: float, rho: float,
-                              surfaces_configurations: List[Dict]) -> dict:
+                              surfaces_configurations: List[Dict]) -> Dict:
 
     try:
         result = {config["name"]: pd.DataFrame(pvlib.irradiance.get_total_irradiance(config["surface_tilt"],
@@ -38,7 +38,7 @@ def calculate_Itot_for_config(solar_zenith: float, solar_azimuth: float,
 
 
 def calculate_AOI_for_config(solar_zenith: float, solar_azimuth: float,
-                             surfaces_configurations: list[dict]) -> dict:
+                             surfaces_configurations: List[Dict]) -> Dict:
     try:
         result = {config["name"]: (pvlib.irradiance.aoi(
             config["surface_tilt"], config["surface_azimuth"],
@@ -57,8 +57,8 @@ def calculate_AOI_for_config(solar_zenith: float, solar_azimuth: float,
     return result
 
 
-def calculate_IAM_for_config(AOI_for_config: dict, n: float, K: float,
-                             L: float, surfaces_configurations: list[dict]) -> dict:
+def calculate_IAM_for_config(AOI_for_config: Dict, n: float, K: float,
+                             L: float, surfaces_configurations: List[Dict]) -> Dict:
     try:
         IAM_for_config = {config["name"]: (pvlib.iam.physical(
             AOI_for_config[config["name"]], n, K, L
@@ -75,9 +75,9 @@ def calculate_IAM_for_config(AOI_for_config: dict, n: float, K: float,
 
 
 def calculate_TMY_global_for_config(TMY_global: pd.DataFrame,
-                                    Itot_for_config: dict,
-                                    IAM_for_config: dict,
-                                    surfaces_configurations: list[dict]) -> dict:
+                                    Itot_for_config: Dict,
+                                    IAM_for_config: Dict,
+                                    surfaces_configurations: List[Dict]) -> Dict:
     TMY_global_for_config = {}
     try:
         for config in surfaces_configurations:
@@ -104,9 +104,9 @@ def calculate_TMY_global_for_config(TMY_global: pd.DataFrame,
     return TMY_global_for_config
 
 
-def calculate_effactive_irr_for_config(TMY_global_for_config: dict,
+def calculate_effactive_irr_for_config(TMY_global_for_config: Dict,
                                        soiling: float,
-                                       surfaces_configurations: list[dict]) -> dict:
+                                       surfaces_configurations: List[Dict]) -> Dict:
     try:
         effective_irr_for_config = {config["name"]: (TMY_global_for_config[config["name"]]['Itot0']*(1-soiling))
                                     for config in surfaces_configurations
@@ -120,10 +120,10 @@ def calculate_effactive_irr_for_config(TMY_global_for_config: dict,
     return effective_irr_for_config
 
 
-def calculate_WS5m_and_Ta_and_Tcell_for_config(TMY_global_for_config: dict,
-                                               effective_irr_for_config: dict,
+def calculate_WS5m_and_Ta_and_Tcell_for_config(TMY_global_for_config: Dict,
+                                               effective_irr_for_config: Dict,
                                                a: float, b: float, deltaT: float,
-                                               surfaces_configurations: list[dict]):
+                                               surfaces_configurations: List[Dict]):
     WS5m_for_config = {}
     Ta_for_config = {}
     Tcell_for_config = {}
@@ -151,10 +151,10 @@ def calculate_WS5m_and_Ta_and_Tcell_for_config(TMY_global_for_config: dict,
     return (WS5m_for_config, Ta_for_config, Tcell_for_config)
 
 
-def calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config(effective_irr_for_config: dict,
-                                                             Tcell_for_config: dict,
+def calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config(effective_irr_for_config: Dict,
+                                                             Tcell_for_config: Dict,
                                                              module_parameters,
-                                                             surfaces_configurations: list[dict]):
+                                                             surfaces_configurations: List[Dict]):
     IL_for_config = {}
     I0_for_config = {}
     Rs_for_config = {}
@@ -186,7 +186,7 @@ def calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config(effective_irr_for_c
 def calculate_single_res_for_config(IL_for_config, I0_for_config,
                                     Rs_for_config, Rsh_for_config,
                                     nNsVth_for_config,
-                                    surfaces_configurations: list[dict]):
+                                    surfaces_configurations: List[Dict]):
     try:
         single_res_for_config = {config["name"]: pvlib.pvsystem.singlediode(photocurrent=IL_for_config[config["name"]],
                                                                             saturation_current=I0_for_config[
@@ -225,7 +225,7 @@ def calculate_P_dc_for_config(single_res_for_config: Dict[str, any],
         for config in surfaces_configurations:
             if "surface_azimuth" in config:
                 series = P_dc_for_config[config["name"]]
-                if isinstance(series, (pd.Series, np.ndarray, list)):
+                if isinstance(series, (pd.Series, np.ndarray, List)):
                     series[series <= 0] = 0
                 else:
                     P_dc_for_config[config["name"]] = max(
@@ -240,11 +240,11 @@ def calculate_P_dc_for_config(single_res_for_config: Dict[str, any],
     return P_dc_for_config
 
 
-def calculate_inverter_load_for_config(P_dc_for_config: dict,
+def calculate_inverter_load_for_config(P_dc_for_config: Dict,
                                        eta_module: float,
                                        r_DCAC: float,
                                        inverterloss: float,
-                                       surfaces_configurations: list[dict]):
+                                       surfaces_configurations: List[Dict]):
     try:
         inverter_load_for_config = {config["name"]: P_dc_for_config[config["name"]]/(eta_module*1000)/r_DCAC/(1-inverterloss)
                                     for config in surfaces_configurations
@@ -259,14 +259,24 @@ def calculate_inverter_load_for_config(P_dc_for_config: dict,
     return inverter_load_for_config
 
 
-def calculate_P_ac_for_config(P_dc_for_config: dict,
+def calculate_P_ac_for_config(P_dc_for_config: Dict,
                               inverterloss: float,
-                              inverter_load_for_config: dict,
-                              surfaces_configurations: list[dict]):
+                              inverter_load_for_config: Dict,
+                              inverter_min: float,
+                              r_DCAC: float,
+                              ACwiring: float,
+                              surfaces_configurations: List[Dict]):
     try:
         P_ac_for_config = {config["name"]: P_dc_for_config[config["name"]]*(1-inverterloss)*(1-np.exp((-inverter_load_for_config[config["name"]]-0.04)/0.04))
                            for config in surfaces_configurations
                            if "surface_azimuth" in config}
+        for config in surfaces_configurations:
+            if "surface_azimuth" in config:
+                config_name = config["name"]
+                P_ac_for_config[config_name][P_ac_for_config[config_name] < inverter_min *
+                                             eta_module*1000/r_DCAC*(1-ACwiring)] = 0
+                P_ac_for_config[config_name][P_ac_for_config[config_name]
+                                             > eta_module*1000/r_DCAC] = eta_module*1000/r_DCAC
 
     except KeyError as e:
         print(f"Missing key: {e}")
@@ -284,7 +294,7 @@ def gain_bifac(bifac, bifac_ratio, H, inter, rho):
         return rho*bifac*(1.037*(1-1/(np.sqrt(inter)))*(1-np.exp(-(8.691-H)/inter))+0.125*(1-1/inter**4))
 
 
-def calculate_n_h90_for_config(P_ac_for_config: dict,
+def calculate_n_h90_for_config(P_ac_for_config: Dict,
                                eta_module: float,
                                r_P90: float,
                                module_eff: float,
@@ -293,7 +303,7 @@ def calculate_n_h90_for_config(P_ac_for_config: dict,
                                H: float,
                                inter: float,
                                rho: float,
-                               surfaces_configurations: list[dict]) -> dict:
+                               surfaces_configurations: List[Dict]) -> Dict:
     try:
         n_h90_for_config = {config["name"]: sum(P_ac_for_config[config["name"]])/1000/eta_module *
                             r_P90*(module_eff/eta_module)

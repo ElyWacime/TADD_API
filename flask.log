@@ -335,3 +335,106 @@ Traceback (most recent call last):
   File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/fuckingAPI.py", line 386, in calculate_pv
     configuration.r_DCAC/(1-configuration.inverterloss)
 AttributeError: 'Configuration' object has no attribute 'r_DCAC'
+2023-08-28 15:31:51,940 - APIproject - ERROR - Exception on /calculate_pv [POST]
+Traceback (most recent call last):
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/APIproject.py", line 388, in calculate_pv
+    single_res_for_config[config_name] = pvlib.pvsystem.singlediode(photocurrent=IL_for_config[config_name],
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/pvsystem.py", line 2473, in singlediode
+    out = _singlediode._lambertw(*args, ivcurve_pnts)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/singlediode.py", line 792, in _lambertw
+    i_sc = _lambertw_i_from_v(0., **params)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/singlediode.py", line 762, in _lambertw_i_from_v
+    a[idx_p] * (Rs[idx_p] * Gsh[idx_p] + 1.)) * \
+TypeError: unsupported operand type(s) for *: 'dict' and 'float'
+2023-08-28 15:33:55,399 - APIproject - ERROR - Exception on /calculate_pv [POST]
+Traceback (most recent call last):
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/APIproject.py", line 388, in calculate_pv
+    single_res_for_config[config_name] = pvlib.pvsystem.singlediode(photocurrent=IL_for_config[config_name],
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/pvsystem.py", line 2473, in singlediode
+    out = _singlediode._lambertw(*args, ivcurve_pnts)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/singlediode.py", line 792, in _lambertw
+    i_sc = _lambertw_i_from_v(0., **params)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/singlediode.py", line 762, in _lambertw_i_from_v
+    a[idx_p] * (Rs[idx_p] * Gsh[idx_p] + 1.)) * \
+TypeError: unsupported operand type(s) for *: 'dict' and 'float'
+2023-08-28 15:57:52,868 - APIproject - ERROR - Exception on /calculate_pv [POST]
+Traceback (most recent call last):
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/APIproject.py", line 388, in calculate_pv
+    single_res_for_config[config_name] = pvlib.pvsystem.singlediode(photocurrent=IL_for_config[config_name],
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/pvsystem.py", line 2473, in singlediode
+    out = _singlediode._lambertw(*args, ivcurve_pnts)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/singlediode.py", line 792, in _lambertw
+    i_sc = _lambertw_i_from_v(0., **params)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/singlediode.py", line 762, in _lambertw_i_from_v
+    a[idx_p] * (Rs[idx_p] * Gsh[idx_p] + 1.)) * \
+TypeError: unsupported operand type(s) for *: 'dict' and 'float'
+2023-08-28 21:00:00,070 - APIproject - ERROR - Exception on /calculate_pv [POST]
+Traceback (most recent call last):
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/APIproject.py", line 388, in calculate_pv
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/pvsystem.py", line 2473, in singlediode
+    out = _singlediode._lambertw(*args, ivcurve_pnts)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/singlediode.py", line 792, in _lambertw
+    i_sc = _lambertw_i_from_v(0., **params)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pvlib/singlediode.py", line 762, in _lambertw_i_from_v
+    a[idx_p] * (Rs[idx_p] * Gsh[idx_p] + 1.)) * \
+TypeError: unsupported operand type(s) for *: 'dict' and 'float'
+2023-08-28 23:18:04,643 - APITADD_refactored - ERROR - Exception on /calculate_pv [POST]
+Traceback (most recent call last):
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/APITADD_refactored.py", line 274, in calculate_pv
+    P_ac_for_config = calculate_P_ac_for_config(inverterloss=configuration.inverterloss, P_dc_for_config=P_dc_for_config,
+TypeError: calculate_P_ac_for_config() missing 3 required positional arguments: 'inverter_min', 'r_DCAC', and 'ACwiring'
+2023-08-28 23:21:24,677 - APITADD_refactored - ERROR - Exception on /calculate_pv [POST]
+Traceback (most recent call last):
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/APITADD_refactored.py", line 276, in calculate_pv
+    inverter_min=configuration.inverter_min, r_DCAC=configuration.rDCAC,
+  File "/home/meshuggah/heavy/enervivo/APIproject/TADD_API/venv/lib/python3.10/site-packages/pydantic/main.py", line 734, in __getattr__
+    raise AttributeError(f'{type(self).__name__!r} object has no attribute {item!r}')
+AttributeError: 'Configuration' object has no attribute 'rDCAC'

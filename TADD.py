@@ -8,7 +8,7 @@ lat = 43.5161  # Coordonées du projet
 long = -1.0285
 # La librairie PVLib possède une fonction qui pemet de récupérer les données PVGIS via son API
 TMY_data = pvlib.iotools.get_pvgis_tmy(lat, long, outputformat='csv', usehorizon=True,
-                                       userhorizon=None, startyear=2005, endyear=2020, url='https://re.jrc.ec.europa.eu/api/v5_2/',
+                                       userhorizon=None, startyear=2005, endyear=2016, url='https://re.jrc.ec.europa.eu/api/v5_2/',
                                        map_variables=False, timeout=30)
 TMY_data = TMY_data[0]
 # Remove time zone to save data in excel
@@ -220,6 +220,7 @@ Itot = pvlib.irradiance.get_total_irradiance(surface_tilt, surface_azimuth, sola
                                              model='perez', model_perez='allsitescomposite1990')
 Itot = pd.DataFrame(Itot)
 
+
 ######## *********#########
 ######## **********#########
 
@@ -329,7 +330,7 @@ for config in surfaces_configurations:
             np.exp(a+b*(WS5m_for_config[config_name].values)+Ta +
                    effective_irr_for_config[config_name]/1000*deltaT)
 
-######### ***************#############
+######### ***************###########
 
 # Import module characteristics
 modules = pvlib.pvsystem.retrieve_sam('cecmod')
@@ -393,7 +394,6 @@ single_res_for_config = calculate_single_res_for_config(I0_for_config=I0_for_con
                                                         Rsh_for_config=Rsh_for_config,
                                                         nNsVth_for_config=nNsVth_for_config,
                                                         surfaces_configurations=surfaces_configurations)
-print(single_res_for_config)
 # Calcul de la sortie AC selon la fonction de l'onduleur dévelopée par EnerVivo
 P_dc = single_res['p_mp']*(1-mismatch)*(1-connections)*(1-DCwiring)/module_area
 P_dc[P_dc <= 0] = 0
@@ -433,7 +433,7 @@ sum_P_ac_for_config = product_for_config.sum(axis=1)
 n_h90 = sum(P_ac)/1000/eta_module*r_P90  # en kWh/kWc
 
 n_h90_for_config = {config["name"]: (sum(
-    P_ac_for_config[config["name"]]/1000/eta_module*r_P90*(module_eff/eta_module)))
+    P_ac_for_config[config["name"]])/1000/eta_module*r_P90*(module_eff/eta_module))
     for config in surfaces_configurations
     if "surface_azimuth" in config}
 
@@ -447,5 +447,6 @@ def gain_bifac(bifac, bifac_ratio, H, inter):
 
 gain = gain_bifac(bifac, bifac_ratio, H, inter)
 
+print(n_h90_for_config)
 
 # n_h90 #résultat final - nombre d'heures équivalent d'ensoleillement, en kWh/kWc/an

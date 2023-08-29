@@ -26,11 +26,6 @@ if not app.debug:
 
 
 class Configuration(BaseModel):
-    # Material proprieties
-    n: float = Field(default=1.526)  # DEFAUT = 1.526
-    L: float = Field(default=0.002)  # DEFAUT = 0.002
-    K: float = Field(default=4)  # DEFAUT = 4
-
     # AC losses
     ACwiring: float = Field(default=0.01)  # DEFAUT = 0.01
 
@@ -116,9 +111,9 @@ class Configuration(BaseModel):
     inter_toitureS5: float = Field(default=2.5)
     inter_toitureS6: float = Field(default=2.5)
 
-    surface_azimuth_ombS1: float = Field(default=180)
-    surface_azimuth_ombS2: float = Field(default=180)
-    surface_azimuth_ombS3: float = Field(default=180)
+    surface_azimuth_ombS1: float = Field(default=0)
+    surface_azimuth_ombS2: float = Field(default=0)
+    surface_azimuth_ombS3: float = Field(default=0)
 
     surface_tilt_ombS1: float = Field(default=0)
     surface_tilt_ombS2: float = Field(default=0)
@@ -140,9 +135,9 @@ class Configuration(BaseModel):
     inter_ombS2: float = Field(default=2.5)
     inter_ombS3: float = Field(default=2.5)
 
-    surface_azimuth_serS1: float = Field(default=180)
-    surface_azimuth_serS2: float = Field(default=180)
-    surface_azimuth_serS3: float = Field(default=180)
+    surface_azimuth_serS1: float = Field(default=0)
+    surface_azimuth_serS2: float = Field(default=0)
+    surface_azimuth_serS3: float = Field(default=0)
 
     surface_tilt_serS1: float = Field(default=0)
     surface_tilt_serS2: float = Field(default=0)
@@ -180,7 +175,6 @@ def calculate_pv():
     TMY_data.set_index(TMY_data.index.tz_localize(None),
                        inplace=True, drop=True)
     TMY_global = TMY_data
-    Ta = TMY_global['T2m'].values
     surfaces_configurations = [
         # Configurations for toiture
         {"name": "toiture_surface1", "surface": configuration.toiture_surface1, "bifac": configuration.bifac_toitureS1,
@@ -250,19 +244,23 @@ def calculate_pv():
 
     effective_irr_for_config = calculate_effactive_irr_for_config(TMY_global_for_config=TMY_global_for_config,
                                                                   soiling=configuration.soiling, surfaces_configurations=surfaces_configurations)
+
     (WS5m_for_config, Ta_for_config, Tcell_for_config) = calculate_WS5m_and_Ta_and_Tcell_for_config(TMY_global_for_config=TMY_global_for_config,
                                                                                                     effective_irr_for_config=effective_irr_for_config,
                                                                                                     a=configuration.a, b=configuration.b, deltaT=configuration.deltaT,
                                                                                                     surfaces_configurations=surfaces_configurations)
 
-    (IL_for_config, I0_for_config, Rs_for_config, Rsh_for_config, nNsVth_for_config) = calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config(effective_irr_for_config=effective_irr_for_config,
-                                                                                                                                                Tcell_for_config=Tcell_for_config,
-                                                                                                                                                module_parameters=module_parameters,
-                                                                                                                                                surfaces_configurations=surfaces_configurations)
+    (IL_for_config, I0_for_config,
+     Rs_for_config, Rsh_for_config, nNsVth_for_config) = calculate_IL_and_IO_and_Rs_and_Rsh_and_nNsVth_for_config(effective_irr_for_config=effective_irr_for_config,
+                                                                                                                  Tcell_for_config=Tcell_for_config,
+                                                                                                                  module_parameters=module_parameters,
+                                                                                                                  surfaces_configurations=surfaces_configurations)
+
     single_res_for_config = calculate_single_res_for_config(IL_for_config=IL_for_config, I0_for_config=I0_for_config,
                                                             Rs_for_config=Rs_for_config, Rsh_for_config=Rsh_for_config,
                                                             nNsVth_for_config=nNsVth_for_config,
                                                             surfaces_configurations=surfaces_configurations)
+
     P_dc_for_config = calculate_P_dc_for_config(single_res_for_config=single_res_for_config,
                                                 mismatch=configuration.mismatch, connections=configuration.connections,
                                                 DCwiring=configuration.DCwiring, module_area=module_area,
@@ -272,8 +270,11 @@ def calculate_pv():
                                                                   eta_module=eta_module,
                                                                   r_DCAC=configuration.r_DCAC, inverterloss=configuration.inverterloss,
                                                                   surfaces_configurations=surfaces_configurations)
+
     P_ac_for_config = calculate_P_ac_for_config(inverterloss=configuration.inverterloss, P_dc_for_config=P_dc_for_config,
                                                 inverter_load_for_config=inverter_load_for_config,
+                                                inverter_min=configuration.inverter_min, r_DCAC=configuration.r_DCAC,
+                                                ACwiring=configuration.ACwiring,
                                                 surfaces_configurations=surfaces_configurations)
 
     n_h90_for_config = calculate_n_h90_for_config(P_ac_for_config=P_ac_for_config, r_P90=configuration.r_P90,

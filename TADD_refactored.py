@@ -13,7 +13,7 @@ lat = 43.5161  # Coordonées du projet
 long = -1.0285
 # La librairie PVLib possède une fonction qui pemet de récupérer les données PVGIS via son API
 TMY_data = pvlib.iotools.get_pvgis_tmy(lat, long, outputformat='csv', usehorizon=True,
-                                       userhorizon=None, startyear=2005, endyear=2020, url='https://re.jrc.ec.europa.eu/api/v5_2/',
+                                       userhorizon=None, startyear=2005, endyear=2016, url='https://re.jrc.ec.europa.eu/api/v5_2/',
                                        map_variables=False, timeout=30)
 TMY_data = TMY_data[0]
 # Remove time zone to save data in excel
@@ -264,6 +264,7 @@ inverter_load_for_config = calculate_inverter_load_for_config(P_dc_for_config=P_
                                                               surfaces_configurations=surfaces_configurations)
 P_ac_for_config = calculate_P_ac_for_config(inverterloss=inverterloss, P_dc_for_config=P_dc_for_config,
                                             inverter_load_for_config=inverter_load_for_config,
+                                            inverter_min=inverter_min, r_DCAC=r_DCAC, ACwiring=ACwiring,
                                             surfaces_configurations=surfaces_configurations)
 
 n_h90_for_config = calculate_n_h90_for_config(P_ac_for_config=P_ac_for_config, r_P90=r_P90,
