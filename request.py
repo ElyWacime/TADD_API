@@ -6,7 +6,7 @@ configuration_data = {
     "lat": 43.5161,
 }
 
-api_endpoint = 'http://api.enervivo.fr/calculate_pv'
+api_endpoint = 'http://127.0.0.1:5000/calculate_pv'
 
 response = requests.post(api_endpoint, json=configuration_data)
 

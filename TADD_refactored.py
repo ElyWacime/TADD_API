@@ -273,4 +273,6 @@ n_h90_for_config = calculate_n_h90_for_config(P_ac_for_config=P_ac_for_config, r
                                               bifac=bifac, bifac_ratio=bifac_ratio, H=H, inter=inter,
                                               rho=rho)
 
-print(n_h90_for_config)
+product_for_config = pd.concat(P_ac_for_config, axis=1)
+sum_P_ac_for_config = product_for_config.sum(axis=1)
+sum_P_ac_for_config = sum_P_ac_for_config.tolist()

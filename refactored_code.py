@@ -309,9 +309,10 @@ def calculate_n_h90_for_config(P_ac_for_config: Dict,
                             r_P90*(module_eff/eta_module)
                             for config in surfaces_configurations
                             if "surface_azimuth" in config}
-        gain = gain_bifac(bifac=bifac, bifac_ratio=bifac_ratio, H=H,
-                          inter=inter, rho=rho)
-        n_h90_for_config = {config["name"]: n_h90_for_config[config["name"]]*(1+gain)
+        gain = {config["name"]: gain_bifac(bifac=config["bifac"], bifac_ratio=config["bifac_ratio"], H=config["H"],
+                                           inter=config["inter"], rho=rho)
+                for config in surfaces_configurations}
+        n_h90_for_config = {config["name"]: n_h90_for_config[config["name"]]*(1+gain[config["name"]])
                             for config in surfaces_configurations
                             if "surface_azimuth" in config}
     except KeyError as e:

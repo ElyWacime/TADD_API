@@ -78,10 +78,16 @@ class Configuration(BaseModel):
     surface_azimuth_toitureS1: float = Field(default=0)
     surface_azimuth_toitureS2: float = Field(default=0)
     surface_azimuth_toitureS3: float = Field(default=0)
+    surface_azimuth_toitureS4: float = Field(default=0)
+    surface_azimuth_toitureS5: float = Field(default=0)
+    surface_azimuth_toitureS6: float = Field(default=0)
 
     surface_tilt_toitureS1: float = Field(default=0)
     surface_tilt_toitureS2: float = Field(default=0)
     surface_tilt_toitureS3: float = Field(default=0)
+    surface_tilt_toitureS4: float = Field(default=0)
+    surface_tilt_toitureS5: float = Field(default=0)
+    surface_tilt_toitureS6: float = Field(default=0)
 
     bifac_toitureS1: float = Field(default=0)
     bifac_toitureS2: float = Field(default=0)
@@ -175,19 +181,20 @@ def calculate_pv():
     TMY_data.set_index(TMY_data.index.tz_localize(None),
                        inplace=True, drop=True)
     TMY_global = TMY_data
+
     surfaces_configurations = [
         # Configurations for toiture
-        {"name": "toiture_surface1", "surface": configuration.toiture_surface1, "bifac": configuration.bifac_toitureS1,
+        {"name": "toiture_surface1", "surface": configuration.toiture_surface1,  "surface_azimuth": configuration.surface_azimuth_toitureS1, "surface_tilt": configuration.surface_tilt_toitureS1, "bifac": configuration.bifac_toitureS1,
             "bifac_ratio": configuration.bifac_ratio_toitureS1, "H": configuration.H_toitureS1, "inter": configuration.inter_toitureS1},
-        {"name": "toiture_surface2", "surface": configuration.toiture_surface2, "bifac": configuration.bifac_toitureS2,
+        {"name": "toiture_surface2", "surface": configuration.toiture_surface2,  "surface_azimuth": configuration.surface_azimuth_toitureS2, "surface_tilt": configuration.surface_tilt_toitureS2, "bifac": configuration.bifac_toitureS2,
             "bifac_ratio": configuration.bifac_ratio_toitureS2, "H": configuration.H_toitureS2, "inter": configuration.inter_toitureS2},
-        {"name": "toiture_surface3", "surface": configuration.toiture_surface3, "bifac": configuration.bifac_toitureS3,
+        {"name": "toiture_surface3", "surface": configuration.toiture_surface3,  "surface_azimuth": configuration.surface_azimuth_toitureS3, "surface_tilt": configuration.surface_tilt_toitureS3, "bifac": configuration.bifac_toitureS3,
             "bifac_ratio": configuration.bifac_ratio_toitureS3, "H": configuration.H_toitureS3, "inter": configuration.inter_toitureS3},
-        {"name": "toiture_surface4", "surface": configuration.toiture_surface4, "bifac": configuration.bifac_toitureS4,
+        {"name": "toiture_surface4", "surface": configuration.toiture_surface4,  "surface_azimuth": configuration.surface_azimuth_toitureS4, "surface_tilt": configuration.surface_tilt_toitureS4, "bifac": configuration.bifac_toitureS4,
             "bifac_ratio": configuration.bifac_ratio_toitureS4, "H": configuration.H_toitureS4, "inter": configuration.inter_toitureS4},
-        {"name": "toiture_surface5", "surface": configuration.toiture_surface5, "bifac": configuration.bifac_toitureS5,
+        {"name": "toiture_surface5", "surface": configuration.toiture_surface5,  "surface_azimuth": configuration.surface_azimuth_toitureS5, "surface_tilt": configuration.surface_tilt_toitureS5, "bifac": configuration.bifac_toitureS5,
             "bifac_ratio": configuration.bifac_ratio_toitureS5, "H": configuration.H_toitureS5, "inter": configuration.inter_toitureS5},
-        {"name": "toiture_surface6", "surface": configuration.toiture_surface6, "bifac": configuration.bifac_toitureS6,
+        {"name": "toiture_surface6", "surface": configuration.toiture_surface6,  "surface_azimuth": configuration.surface_azimuth_toitureS6, "surface_tilt": configuration.surface_tilt_toitureS6, "bifac": configuration.bifac_toitureS6,
             "bifac_ratio": configuration.bifac_ratio_toitureS6, "H": configuration.H_toitureS6, "inter": configuration.inter_toitureS6},
         # Configurations for ombrière
         {"name": "ombriere_surface1", "surface": configuration.ombriere_surface1, "surface_azimuth": configuration.surface_azimuth_ombS1,
@@ -283,7 +290,14 @@ def calculate_pv():
                                                   bifac=configuration.bifac, bifac_ratio=configuration.bifac_ratio, H=configuration.H, inter=configuration.inter,
                                                   rho=configuration.rho)
 
-    return jsonify(n_h90_for_config)
+    product_for_config = pd.concat(P_ac_for_config, axis=1)
+    sum_P_ac_for_config = product_for_config.sum(axis=1)
+    sum_P_ac_for_config = sum_P_ac_for_config.tolist()
+
+    data = {"P_ac_for_config": sum_P_ac_for_config,
+            "n_h90_for_config": n_h90_for_config}
+
+    return jsonify(data)
 
 
 if __name__ == '__main__':
