@@ -188,7 +188,7 @@ def calculate_pv():
 
     # La librairie PVLib possède une fonction qui pemet de récupérer les données PVGIS via son API
     TMY_data = pvlib.iotools.get_pvgis_tmy(configuration.lat, configuration.long, outputformat='csv', usehorizon=True,
-                                           userhorizon=None, startyear=2005, endyear=2016, url='https://re.jrc.ec.europa.eu/api/v5_2/',
+                                           userhorizon=None, startyear=2005, endyear=2020, url='https://re.jrc.ec.europa.eu/api/v5_2/',
                                            map_variables=False, timeout=30)
     TMY_data = TMY_data[0]
     # Remove time zone to save data in excel

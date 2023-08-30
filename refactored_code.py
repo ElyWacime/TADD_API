@@ -79,17 +79,23 @@ def calculate_TMY_global_for_config(TMY_global: pd.DataFrame,
                                     IAM_for_config: Dict,
                                     surfaces_configurations: List[Dict]) -> Dict:
     TMY_global_for_config = {}
+    for config in surfaces_configurations:
+        TMY_global_for_config[config["name"]] = TMY_global.copy()
+
     try:
         for config in surfaces_configurations:
             config_name = config["name"]
-            if "surface_azimuth" in config:
-                TMY_global_for_config[config["name"]] = TMY_global
-                if config_name in Itot_for_config and config_name in TMY_global_for_config:
-                    TMY_global_for_config[config_name]['I(b)'] = Itot_for_config[config_name]['poa_direct'].values
-                    TMY_global_for_config[config_name]['I(d)'] = Itot_for_config[config_name][
-                        'poa_sky_diffuse'].values
-                    TMY_global_for_config[config_name]['I(r)'] = Itot_for_config[config_name][
-                        'poa_ground_diffuse'].values
+
+            if config_name not in TMY_global_for_config:
+                TMY_global_for_config[config_name] = pd.DataFrame()
+
+            if config_name in Itot_for_config and Itot_for_config[config_name] is not None:
+                itot_df = Itot_for_config[config_name]
+
+                if all(col in itot_df.columns for col in ['poa_direct', 'poa_sky_diffuse', 'poa_ground_diffuse']):
+                    TMY_global_for_config[config_name]['I(b)'] = itot_df['poa_direct'].values
+                    TMY_global_for_config[config_name]['I(d)'] = itot_df['poa_sky_diffuse'].values
+                    TMY_global_for_config[config_name]['I(r)'] = itot_df['poa_ground_diffuse'].values
                     TMY_global_for_config[config_name]['Itot0'] = IAM_for_config[config_name]*(TMY_global_for_config[config_name]['I(b)']
                                                                                                + TMY_global_for_config[config_name]['I(d)']
                                                                                                + TMY_global_for_config[config_name]['I(r)'])
@@ -278,13 +284,21 @@ def calculate_P_ac_for_config(P_dc_for_config: Dict,
                 P_ac_for_config[config_name][P_ac_for_config[config_name]
                                              > eta_module*1000/r_DCAC] = eta_module*1000/r_DCAC
 
+        product_P_ac_for_config = {config["name"]: P_ac_for_config[config["name"]] * config["surface"]
+                                   for config in surfaces_configurations
+                                   if config["name"] in P_ac_for_config}
+
+        product_for_config = pd.concat(product_P_ac_for_config, axis=1)
+        sum_P_ac_for_config = (product_for_config.sum(axis=1))
+        sum_P_ac_for_config = sum_P_ac_for_config.tolist()
+
     except KeyError as e:
         print(f"Missing key: {e}")
         return None
     except Exception as e:
         print(f"Error accured: {e}")
         return None
-    return P_ac_for_config
+    return P_ac_for_config, sum_P_ac_for_config
 
 
 def gain_bifac(bifac, bifac_ratio, H, inter, rho):
@@ -321,4 +335,4 @@ def calculate_n_h90_for_config(P_ac_for_config: Dict,
     except Exception as e:
         print(f"Error accured: {e}")
         return None
-    return n_h90_for_config
+    return n_h90_for_config, gain

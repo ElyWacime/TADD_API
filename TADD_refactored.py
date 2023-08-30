@@ -6,68 +6,50 @@ from pvlib import location
 import pandas as pd
 import numpy as np
 import pvlib
-from pprint import pprint
 
-
-lat = 43.5161  # Coordonées du projet
+lat = 43.5161
 long = -1.0285
-# La librairie PVLib possède une fonction qui pemet de récupérer les données PVGIS via son API
+
 TMY_data = pvlib.iotools.get_pvgis_tmy(lat, long, outputformat='csv', usehorizon=True,
-                                       userhorizon=None, startyear=2005, endyear=2016, url='https://re.jrc.ec.europa.eu/api/v5_2/',
+                                       userhorizon=None, startyear=2005, endyear=2020, url='https://re.jrc.ec.europa.eu/api/v5_2/',
                                        map_variables=False, timeout=30)
 TMY_data = TMY_data[0]
 # Remove time zone to save data in excel
 TMY_data.set_index(TMY_data.index.tz_localize(None), inplace=True, drop=True)
-TMY_global = TMY_data  # Les données météo sont stockées dans la dataframe TMY_global
-Ta = TMY_global['T2m'].values
-# Surface Azimuth (deg)
-surface_azimuth = 0
+TMY_global = TMY_data
 
-# Surface tilt (deg)
-surface_tilt = 0
 
-# Temperature coefficients
-a = -3.56  # DEFAUT = -3.56
-b = -0.075  # DEFAUT = -0.075
-deltaT = 3  # DEFAUT = 3
+a = -4.56  # DEFAUT = -3.56
+b = -0.085  # DEFAUT = -0.075
+deltaT = 5
 
-# Module temperature (@NOCT, %W/°C)
-gamma_mp = -0.45  # DEFAUT = -0.45
+gamma_mp = -0.9
 
-# Material proprieties
-n = 1.526  # DEFAUT = 1.526
-L = 0.002  # DEFAUT = 0.002
-K = 4  # DEFAUT = 4
+n = 1.526
+L = 0.002
+K = 4
 
-# Ground albedo
-rho = 0.2  # DEFAUT = 0.2
+rho = 0.15
 
-# Soiling losses
-soiling = 0.03  # DEFAUT = 0.03
+soiling = 0.9
 
-# Module efficiency
-module_eff = 0.20  # Default 20%
+module_eff = 0.5
 
-# DC losses
-mismatch = 0.02  # DEFAUT = 0.02
-connections = 0.005  # DEFAUT = 0.005
-DCwiring = 0.015  # DEFAUT = 0.02
-inverterloss = 0.015  # DEFAUT = 0.035
-inverter_min = 0.01  # DEFAUT = 0.01
+mismatch = 0.03  # DEFAUT = 0.02
+connections = 0.015  # DEFAUT = 0.005
+DCwiring = 0.025  # DEFAUT = 0.015
+inverterloss = 0.025  # DEFAUT = 0.015
+inverter_min = 0.03
 
-# AC losses
-ACwiring = 0.01  # DEFAUT = 0.01
+ACwiring = 0.01
 
-# r_DCAC ratio
-r_DCAC = 1.2  # DEFAUT = 1.2
+r_DCAC = 1.2
 
-# Inputs pour Ombrière ou Serre
-bifac = 0  # Si bifac = 0, module non bifacial, sinon = 1 si bifacial. DEFAUT = 0
-bifac_ratio = 0.65  # DEFAUT = 0.65
-H = 4  # DEFAUT = 4m
-inter = 2.5  # DEFAUT = 2.5m
+bifac = 1
+bifac_ratio = 0.65
+H = 4
+inter = 2.5
 
-# Ratio P90/P50
 r_P90 = 0.94
 
 
@@ -82,7 +64,7 @@ serre_surface1 = 0
 serre_surface2 = 0
 serre_surface3 = 0
 
-ombriere_surface1 = 0
+ombriere_surface1 = 1
 ombriere_surface2 = 0
 ombriere_surface3 = 0
 
@@ -90,10 +72,17 @@ ombriere_surface3 = 0
 surface_azimuth_toitureS1 = 0
 surface_azimuth_toitureS2 = 0
 surface_azimuth_toitureS3 = 0
+surface_azimuth_toitureS4 = 0
+surface_azimuth_toitureS5 = 0
+surface_azimuth_toitureS6 = 0
 
 surface_tilt_toitureS1 = 0
 surface_tilt_toitureS2 = 0
 surface_tilt_toitureS3 = 0
+surface_tilt_toitureS4 = 0
+surface_tilt_toitureS5 = 0
+surface_tilt_toitureS6 = 0
+
 
 bifac_toitureS1 = 0
 bifac_toitureS2 = 0
@@ -123,15 +112,15 @@ inter_toitureS4 = 2.5
 inter_toitureS5 = 2.5
 inter_toitureS6 = 2.5
 
-surface_azimuth_ombS1 = 180
+surface_azimuth_ombS1 = 90
 surface_azimuth_ombS2 = 180
 surface_azimuth_ombS3 = 180
 
-surface_tilt_ombS1 = 0
+surface_tilt_ombS1 = 30
 surface_tilt_ombS2 = 0
 surface_tilt_ombS3 = 0
 
-bifac_ombS1 = 0
+bifac_ombS1 = 1
 bifac_ombS2 = 0
 bifac_ombS3 = 0
 
@@ -173,17 +162,17 @@ inter_serS3 = 2.5
 
 surfaces_configurations = [
     # Configurations for toiture
-    {"name": "toiture_surface1", "surface": toiture_surface1, "bifac": bifac_toitureS1,
+    {"name": "toiture_surface1", "surface": toiture_surface1,  "surface_azimuth": surface_azimuth_toitureS1, "surface_tilt": surface_tilt_toitureS1, "bifac": bifac_toitureS1,
         "bifac_ratio": bifac_ratio_toitureS1, "H": H_toitureS1, "inter": inter_toitureS1},
-    {"name": "toiture_surface2", "surface": toiture_surface2, "bifac": bifac_toitureS2,
+    {"name": "toiture_surface2", "surface": toiture_surface2,  "surface_azimuth": surface_azimuth_toitureS2, "surface_tilt": surface_tilt_toitureS2, "bifac": bifac_toitureS2,
         "bifac_ratio": bifac_ratio_toitureS2, "H": H_toitureS2, "inter": inter_toitureS2},
-    {"name": "toiture_surface3", "surface": toiture_surface3, "bifac": bifac_toitureS3,
+    {"name": "toiture_surface3", "surface": toiture_surface3,  "surface_azimuth": surface_azimuth_toitureS3, "surface_tilt": surface_tilt_toitureS3, "bifac": bifac_toitureS3,
         "bifac_ratio": bifac_ratio_toitureS3, "H": H_toitureS3, "inter": inter_toitureS3},
-    {"name": "toiture_surface4", "surface": toiture_surface4, "bifac": bifac_toitureS4,
+    {"name": "toiture_surface4", "surface": toiture_surface4,  "surface_azimuth": surface_azimuth_toitureS4, "surface_tilt": surface_tilt_toitureS4, "bifac": bifac_toitureS4,
         "bifac_ratio": bifac_ratio_toitureS4, "H": H_toitureS4, "inter": inter_toitureS4},
-    {"name": "toiture_surface5", "surface": toiture_surface5, "bifac": bifac_toitureS5,
+    {"name": "toiture_surface5", "surface": toiture_surface5,  "surface_azimuth": surface_azimuth_toitureS5, "surface_tilt": surface_tilt_toitureS5, "bifac": bifac_toitureS5,
         "bifac_ratio": bifac_ratio_toitureS5, "H": H_toitureS5, "inter": inter_toitureS5},
-    {"name": "toiture_surface6", "surface": toiture_surface6, "bifac": bifac_toitureS6,
+    {"name": "toiture_surface6", "surface": toiture_surface6,  "surface_azimuth": surface_azimuth_toitureS6, "surface_tilt": surface_tilt_toitureS6, "bifac": bifac_toitureS6,
         "bifac_ratio": bifac_ratio_toitureS6, "H": H_toitureS6, "inter": inter_toitureS6},
     # Configurations for ombrière
     {"name": "ombriere_surface1", "surface": ombriere_surface1, "surface_azimuth": surface_azimuth_ombS1,
@@ -207,7 +196,6 @@ sp = loc.get_solarposition(times)
 # Récupération des angles solaires via le module 'loc' de pvlib
 solar_zenith = sp['apparent_zenith'].values
 solar_azimuth = sp['azimuth'].values
-
 
 dni = TMY_global['Gb(n)'].values
 ghi = TMY_global['G(h)'].values
@@ -240,6 +228,7 @@ TMY_global_for_config = calculate_TMY_global_for_config(TMY_global=TMY_global,
 
 effective_irr_for_config = calculate_effactive_irr_for_config(TMY_global_for_config=TMY_global_for_config,
                                                               soiling=soiling, surfaces_configurations=surfaces_configurations)
+
 (WS5m_for_config, Ta_for_config, Tcell_for_config) = calculate_WS5m_and_Ta_and_Tcell_for_config(TMY_global_for_config=TMY_global_for_config,
                                                                                                 effective_irr_for_config=effective_irr_for_config,
                                                                                                 a=a, b=b, deltaT=deltaT,
@@ -249,10 +238,12 @@ effective_irr_for_config = calculate_effactive_irr_for_config(TMY_global_for_con
                                                                                                                                             Tcell_for_config=Tcell_for_config,
                                                                                                                                             module_parameters=module_parameters,
                                                                                                                                             surfaces_configurations=surfaces_configurations)
+
 single_res_for_config = calculate_single_res_for_config(IL_for_config=IL_for_config, I0_for_config=I0_for_config,
                                                         Rs_for_config=Rs_for_config, Rsh_for_config=Rsh_for_config,
                                                         nNsVth_for_config=nNsVth_for_config,
                                                         surfaces_configurations=surfaces_configurations)
+
 P_dc_for_config = calculate_P_dc_for_config(single_res_for_config=single_res_for_config,
                                             mismatch=mismatch, connections=connections,
                                             DCwiring=DCwiring, module_area=module_area,
@@ -262,17 +253,25 @@ inverter_load_for_config = calculate_inverter_load_for_config(P_dc_for_config=P_
                                                               eta_module=eta_module,
                                                               r_DCAC=r_DCAC, inverterloss=inverterloss,
                                                               surfaces_configurations=surfaces_configurations)
-P_ac_for_config = calculate_P_ac_for_config(inverterloss=inverterloss, P_dc_for_config=P_dc_for_config,
-                                            inverter_load_for_config=inverter_load_for_config,
-                                            inverter_min=inverter_min, r_DCAC=r_DCAC, ACwiring=ACwiring,
-                                            surfaces_configurations=surfaces_configurations)
 
-n_h90_for_config = calculate_n_h90_for_config(P_ac_for_config=P_ac_for_config, r_P90=r_P90,
-                                              eta_module=eta_module, module_eff=module_eff,
-                                              surfaces_configurations=surfaces_configurations,
-                                              bifac=bifac, bifac_ratio=bifac_ratio, H=H, inter=inter,
-                                              rho=rho)
+P_ac_for_config, sum_P_ac_for_config = calculate_P_ac_for_config(inverterloss=inverterloss, P_dc_for_config=P_dc_for_config,
+                                                                 inverter_load_for_config=inverter_load_for_config,
+                                                                 inverter_min=inverter_min, r_DCAC=r_DCAC, ACwiring=ACwiring,
+                                                                 surfaces_configurations=surfaces_configurations)
 
-product_for_config = pd.concat(P_ac_for_config, axis=1)
-sum_P_ac_for_config = product_for_config.sum(axis=1)
-sum_P_ac_for_config = sum_P_ac_for_config.tolist()
+n_h90_for_config, gain = calculate_n_h90_for_config(P_ac_for_config=P_ac_for_config, r_P90=r_P90,
+                                                    eta_module=eta_module, module_eff=module_eff,
+                                                    surfaces_configurations=surfaces_configurations,
+                                                    bifac=bifac, bifac_ratio=bifac_ratio, H=H, inter=inter,
+                                                    rho=rho)
+
+
+somme = 0
+for elem in sum_P_ac_for_config:
+    somme += elem
+
+data = {"n_h90_for_config": n_h90_for_config}
+
+"""pd.set_option('display.max_columns', None)
+pd.set_option('display.max_rows', None)"""
+print(f'TADD: {somme}')

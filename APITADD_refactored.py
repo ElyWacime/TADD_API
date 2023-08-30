@@ -174,7 +174,7 @@ def calculate_pv():
 
     # La librairie PVLib possède une fonction qui pemet de récupérer les données PVGIS via son API
     TMY_data = pvlib.iotools.get_pvgis_tmy(configuration.lat, configuration.long, outputformat='csv', usehorizon=True,
-                                           userhorizon=None, startyear=2005, endyear=2016, url='https://re.jrc.ec.europa.eu/api/v5_2/',
+                                           userhorizon=None, startyear=2005, endyear=2020, url='https://re.jrc.ec.europa.eu/api/v5_2/',
                                            map_variables=False, timeout=30)
     TMY_data = TMY_data[0]
     # Remove time zone to save data in excel
@@ -278,21 +278,17 @@ def calculate_pv():
                                                                   r_DCAC=configuration.r_DCAC, inverterloss=configuration.inverterloss,
                                                                   surfaces_configurations=surfaces_configurations)
 
-    P_ac_for_config = calculate_P_ac_for_config(inverterloss=configuration.inverterloss, P_dc_for_config=P_dc_for_config,
-                                                inverter_load_for_config=inverter_load_for_config,
-                                                inverter_min=configuration.inverter_min, r_DCAC=configuration.r_DCAC,
-                                                ACwiring=configuration.ACwiring,
-                                                surfaces_configurations=surfaces_configurations)
+    P_ac_for_config, sum_P_ac_for_config = calculate_P_ac_for_config(inverterloss=configuration.inverterloss, P_dc_for_config=P_dc_for_config,
+                                                                     inverter_load_for_config=inverter_load_for_config,
+                                                                     inverter_min=configuration.inverter_min, r_DCAC=configuration.r_DCAC,
+                                                                     ACwiring=configuration.ACwiring,
+                                                                     surfaces_configurations=surfaces_configurations)
 
     n_h90_for_config = calculate_n_h90_for_config(P_ac_for_config=P_ac_for_config, r_P90=configuration.r_P90,
                                                   eta_module=eta_module, module_eff=configuration.module_eff,
                                                   surfaces_configurations=surfaces_configurations,
                                                   bifac=configuration.bifac, bifac_ratio=configuration.bifac_ratio, H=configuration.H, inter=configuration.inter,
                                                   rho=configuration.rho)
-
-    product_for_config = pd.concat(P_ac_for_config, axis=1)
-    sum_P_ac_for_config = product_for_config.sum(axis=1)
-    sum_P_ac_for_config = sum_P_ac_for_config.tolist()
 
     data = {"P_ac_for_config": sum_P_ac_for_config,
             "n_h90_for_config": n_h90_for_config}
