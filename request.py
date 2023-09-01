@@ -49,7 +49,7 @@ if response.status_code == 200:
     for elem in (result["P_ac_for_config"]):
         somme += elem
 
-    print(somme)
+    print(result)
 else:
     print("Error occurred. Status code:", response.status_code)
     print(response.text)
