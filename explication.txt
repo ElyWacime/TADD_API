@@ -1,0 +1,2 @@
+les params d'entré:
+long et lat + efficacité du module (module_eff) + (sauf espacement entre les rengé et hauteur de garde au sol)

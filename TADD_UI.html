@@ -1,0 +1,297 @@
+<style>
+
+</style>
+
+<form id="api_form">
+    <div class="content_container">
+        <div class="type_de_configuration" id="type_de_configuration">
+            <label class="type_de_configuration">Type de configuration: </label>
+            <select class="type_de_configuration_selct" name="type_de_configuration_select" id="type_de_configuration_select"
+            onchange="displayFields(this.value)">
+                <option value="Toiture">Toiture</option>
+                <option value="Serre">Serre</option>
+                <option value="Ombrière">Ombrière</option>
+            </select>
+        </div>
+        <span class="module_eff" id="module_eff">
+            <label class="module_eff_label" id="module_eff_label">Efficacité du module: </label>
+            <input type="text" class="module_eff_input" id="module_eff_input">
+        </span><br>
+        <div class="toiture_field" id="toiture_field">
+            <div class="number_of_surface">
+                <label class="number_of_surface">Nombre de surface: </label>
+                <select class="number_of_surface_selct" name="number_of_surface_select" id="number_of_surface_select_toiture"
+                onchange="displayFields(this.value)">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
+            <span class="toiture_surface1">
+                <label class="toiture_surface1_label" id="toiture_surface1_label">Toiture surface 1 (m²): </label>
+                <input class="toiture_surface1_input" id="toiture_surface1_input">
+            </span><br>
+            <span class="toiture_surface2">
+                <label class="toiture_surface2_label" id="toiture_surface2_label">Toiture surface 2 (m²): </label>
+                <input class="toiture_surface2_input" id="toiture_surface2_input">
+            </span><br>
+            <span class="toiture_surface3">
+                <label class="toiture_surface3_label" id="toiture_surface3_label">Toiture surface 3 (m²): </label>
+                <input class="toiture_surface3_input" id="toiture_surface3_input">
+            </span><br>
+            <span class="toiture_surface4">
+                    <label class="toiture_surface4_label" id="toiture_surface4_label">Toiture surface 4 (m²): </label>
+                    <input class="toiture_surface4_input" id="toiture_surface4_input">
+            </span><br>
+            <span class="toiture_surface5">
+                    <label class="toiture_surface5_label" id="toiture_surface5_label">Toiture surface 5 (m²): </label>
+                    <input class="toiture_surface5_input" id="toiture_surface5_input">
+            </span><br>
+            <span class="toiture_surface6">
+                    <label class="toiture_surface6_label" id="toiture_surface6_label">Toiture surface 6 (m²): </label>
+                    <input class="toiture_surface6_input" id="toiture_surface6_input">
+            </span><br>
+
+            <div class="orientation_toitureS1" id="orientation_toitureS1">
+                <label class="orientation_toitureS1_label" id="orientation_toitureS1_label">Orientation toiture surface1: </label>
+                <input class="orientation_toitureS1_input" id="orientation_toitureS1_input">
+            </div>
+            <div class="orientation_toitureS2" id="orientation_toitureS2">
+                <label class="orientation_toitureS2_label" id="orientation_toitureS2_label">Orientation toiture surface2: </label>
+                <input class="orientation_toitureS2_input" id="orientation_toitureS2_input">
+            </div>
+            <div class="orientation_toitureS3" id="orientation_toitureS3">
+                <label class="orientation_toitureS3_label" id="orientation_toitureS3_label">Orientation toiture surface3: </label>
+                <input class="orientation_toitureS3_input" id="orientation_toitureS3_input">
+            </div>
+            <div class="orientation_toitureS4" id="orientation_toitureS4">
+                <label class="orientation_toitureS4_label" id="orientation_toitureS4_label">Orientation toiture surface4: </label>
+                <input class="orientation_toitureS4_input" id="orientation_toitureS4_input">
+            </div>
+            <div class="orientation_toitureS5" id="orientation_toitureS5">
+                <label class="orientation_toitureS5_label" id="orientation_toitureS5_label">Orientation toiture surface5: </label>
+                <input class="orientation_toitureS5_input" id="orientation_toitureS5_input">
+            </div>
+            <div class="orientation_toitureS6" id="orientation_toitureS6">
+                <label class="orientation_toitureS6_label" id="orientation_toitureS6_label">Orientation toiture surface6: </label>
+                <input class="orientation_toitureS6_input" id="orientation_toitureS6_input">
+            </div>
+
+            <div class="inclinaison_toitureS1" id="inclinaison_toitureS1">
+                <label class="inclinaison_toitureS1_label" id="inclinaison_toitureS1_label">Inclinaison toiture surface1: </label>
+                <input class="inclinaison_toitureS1_input" id="inclinaison_toitureS1_input">
+            </div>
+            <div class="inclinaison_toitureS2" id="inclinaison_toitureS2">
+                <label class="inclinaison_toitureS2_label" id="inclinaison_toitureS2_label">Inclinaison toiture surface2: </label>
+                <input class="inclinaison_toitureS2_input" id="inclinaison_toitureS2_input">
+            </div>
+            <div class="inclinaison_toitureS3" id="inclinaison_toitureS3">
+                <label class="inclinaison_toitureS3_label" id="inclinaison_toitureS3_label">Inclinaison toiture surface3: </label>
+                <input class="inclinaison_toitureS3_input" id="inclinaison_toitureS3_input">
+            </div>
+            <div class="inclinaison_toitureS4" id="inclinaison_toitureS4">
+                <label class="inclinaison_toitureS4_label" id="inclinaison_toitureS4_label">Inclinaison toiture surface4: </label>
+                <input class="inclinaison_toitureS4_input" id="inclinaison_toitureS4_input">
+            </div>
+            <div class="inclinaison_toitureS5" id="inclinaison_toitureS5">
+                <label class="inclinaison_toitureS5_label" id="inclinaison_toitureS5_label">Inclinaison toiture surface5: </label>
+                <input class="inclinaison_toitureS5_input" id="inclinaison_toitureS5_input">
+            </div>
+            <div class="inclinaison_toitureS6" id="inclinaison_toitureS6">
+                <label class="inclinaison_toitureS6_label" id="inclinaison_toitureS6_label">Inclinaison toiture surface6: </label>
+                <input class="inclinaison_toitureS6_input" id="inclinaison_toitureS6_input">
+            </div>
+            
+        </div>
+        <div class="ombriere_field" id="ombriere_field" style="display: none;">
+            <div class="number_of_surface">
+                <label class="number_of_surface">Nombre de surface: </label>
+                <select class="number_of_surface_selct" name="number_of_surface_select" id="number_of_surface_select_ombriere"
+                onchange="displayFields(this.value)">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+            <div class="ombiere_surface1" id="ombiere_surface1">
+                <label class="ombiere_surface1_label" id="ombiere_surface1_label">Ombrière surface1: </label>
+                <input class="ombiere_surface1_input" id="ombiere_surface1_input">
+            </div>
+            <div class="ombiere_surface2" id="ombiere_surface2">
+                <label class="ombiere_surface2_label" id="ombiere_surface2_label">Ombrière surface2: </label>
+                <input class="ombiere_surface2_input" id="ombiere_surface2_input">
+            </div>
+            <div class="ombiere_surface3" id="ombiere_surface3">
+                <label class="ombiere_surface3_label" id="ombiere_surface3_label">Ombrière surface3: </label>
+                <input class="ombiere_surface3_input" id="ombiere_surface3_input">
+            </div>
+            <div class="ombiere_surface3"></div>
+
+            <div class="inclinaison_ombS1" id="inclinaison_ombS1">
+                <label class="inclinaison_ombS1_label" id="inclinaison_ombS1_label">Inclinaison ombrière surface1: </label>
+                <input class="inclinaison_ombS1_input" id="inclinaison_ombS1_input">
+            </div>
+
+            <div class="inclinaison_ombS2" id="inclinaison_ombS2">
+                <label class="inclinaison_ombS2_label" id="inclinaison_ombS2_label">Inclinaison ombrière surface2: </label>
+                <input class="inclinaison_ombS2_input" id="inclinaison_ombS2_input">
+            </div>
+
+            <div class="inclinaison_ombS3" id="inclinaison_ombS3">
+                <label class="inclinaison_ombS3_label" id="inclinaison_ombS3_label">Inclinaison ombrière surface3: </label>
+                <input class="inclinaison_ombS3_input" id="inclinaison_ombS3_input">
+            </div>
+
+            <div class="orientation_ombS1" id="orientation_ombS1">
+                <label class="orientation_ombS1_label" id="orientation_ombS1_label">Orientation ombrière surface 1: </label>
+                <input class="orientation_ombS1_input" id="orientation_ombS1_input">
+            </div>
+            <div class="orientation_ombS2" id="orientation_ombS2">
+                <label class="orientation_ombS2_label" id="orientation_ombS2_label">Orientation ombrière surface 2: </label>
+                <input class="orientation_ombS2_input" id="orientation_ombS2_input">
+            </div>
+            <div class="orientation_ombS3" id="orientation_ombS3">
+                <label class="orientation_ombS3_label" id="orientation_ombS3_label">Orientation ombrière surface 3: </label>
+                <input class="orientation_ombS3_input" id="orientation_ombS3_input">
+            </div>
+        </div>
+        <div class="serre_field" id="serre_field" style="display: none;">
+            <div class="number_of_surface">
+                <label class="number_of_surface">Nombre de surface: </label>
+                <select class="number_of_surface_selct" name="number_of_surface_select" id="number_of_surface_select_serre"
+                onchange="displayFields(this.value)">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                </select>
+            </div>
+            <div class="serre_surface1" id="serre_surface1">
+                <label class="serre_surface1_label" id="serre_surface1_label">Serre surface 1 (m²): </label>
+                <input class="serre_surface1_input" id="serre_surface1_input">
+            </div>
+            <div class="serre_surface2" id="serre_surface2">
+                <label class="serre_surface2_label" id="serre_surface2_label">Serre surface 2 (m²): </label>
+                <input class="serre_surface2_input" id="serre_surface2_input">
+            </div>
+            <div class="serre_surface3" id="serre_surface3">
+                <label class="serre_surface3_label" id="serre_surface3_label">Serre surface 3 (m²): </label>
+                <input class="serre_surface3_input" id="serre_surface3_input">
+            </div>
+
+            <div class="orientation_serreS1" id="orientation_serreS1">
+                <label class="orientation_serreS1_label" id="orientation_serreS1_label">Orientation serre surface 1: </label>
+                <input class="orientation_serreS1_input" id="orientation_serreS1_input">
+            </div>
+
+            <div class="orientation_serreS2" id="orientation_serreS2">
+                <label class="orientation_serreS2_label" id="orientation_serreS2_label">Orientation serre surface 2: </label>
+                <input class="orientation_serreS2_input" id="orientation_serreS2_input">
+            </div>
+
+            <div class="orientation_serreS3" id="orientation_serreS3">
+                <label class="orientation_serreS3_label" id="orientation_serreS3_label">Orientation serre surface 3: </label>
+                <input class="orientation_serreS3_input" id="orientation_serreS3_input">
+            </div>
+
+            <div class="inclinaison_serreS1" id="inclinaison_serreS1">
+                <label class="inclinaison_serreS1_label" id="inclinaison_serreS1_label">Inclinaison serre surface 1: </label>
+                <input class="inclinaison_serreS1_input" id="inclinaison_serreS1_input">
+            </div>
+
+            <div class="inclinaison_serreS2" id="inclinaison_serreS2">
+                <label class="inclinaison_serreS2_label" id="inclinaison_serreS2_label">Inclinaison serre surface 2: </label>
+                <input class="inclinaison_serreS2_input" id="inclinaison_serreS2_input">
+            </div>
+
+            <div class="inclinaison_serreS3" id="inclinaison_serreS3">
+                <label class="inclinaison_serreS3_label" id="inclinaison_serreS3_label">Inclinaison serre surface 3: </label>
+                <input class="inclinaison_serreS3_input" id="inclinaison_serreS3_input">
+            </div>
+            
+        </div>
+    </div>
+    <button type="submit" class="submit_button" id="submit_button" type="submit">Calculer</button>
+</form>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        displayFields(document.getElementById("type_de_configuration").value);
+    });
+
+    function displayFields(value) {
+        const toiture = document.getElementById("toiture_field");
+        const ombriere = document.getElementById("ombriere_field");
+        const serre = document.getElementById("serre_field");
+
+        if (value == "Toiture") {
+            toiture.style.display = "block";
+            ombriere.style.display = "none";
+            serre.style.display = "none";
+        } else if (value == "Ombrière") {
+            ombriere.style.display = "block";
+            toiture.style.display = "none";
+            serre.style.display = "none";
+        } else if (value == "Serre") {
+            serre.style.display = "block";
+            toiture.style.display = "none";
+            ombriere.style.display = "none";
+        }
+    };
+    document.getElementById("apiform").addEventListener("submit", function(e) {
+        e.preventDefault();
+    });
+        let configuration_data = {
+            "module_eff": document.getElementById("module_eff").value
+        };
+
+        let type_de_configuration = document.getElementById("type_de_configuration").value;
+
+        if (type_de_configuration === "Toiture") {
+            configuration_data["toiture_surface1"] = document.getElementById("toiture_surface1_input").value;
+            configuration_data["toiture_surface2"] = document.getElementById("toiture_surface2_input").value;
+            configuration_data["toiture_surface3"] = document.getElementById("toiture_surface3_input").value;
+            configuration_data["toiture_surface4"] = document.getElementById("toiture_surface4_input").value;
+            configuration_data["toiture_surface5"] = document.getElementById("toiture_surface5_input").value;
+            configuration_data["toiture_surface6"] = document.getElementById("toiture_surface6_input").value;
+
+            configuration_data["surface_tilt_toitureS1"] = document.getElementById("inclinaison_toitureS1_input").value;
+            configuration_data["surface_tilt_toitureS2"] = document.getElementById("inclinaison_toitureS2_input").value;
+            configuration_data["surface_tilt_toitureS3"] = document.getElementById("inclinaison_toitureS3_input").value;
+            configuration_data["surface_tilt_toitureS4"] = document.getElementById("inclinaison_toitureS4_input").value;
+            configuration_data["surface_tilt_toitureS5"] = document.getElementById("inclinaison_toitureS5_input").value;
+            configuration_data["surface_tilt_toitureS6"] = document.getElementById("inclinaison_toitureS6_input").value;
+
+            configuration_data["surface_azimuth_toitureS1"] = document.getElementById("orientation_toitureS1_input").value;
+            configuration_data["surface_azimuth_toitureS2"] = document.getElementById("orientation_toitureS2_input").value;
+            configuration_data["surface_azimuth_toitureS3"] = document.getElementById("orientation_toitureS3_input").value;
+            configuration_data["surface_azimuth_toitureS4"] = document.getElementById("orientation_toitureS4_input").value;
+            configuration_data["surface_azimuth_toitureS5"] = document.getElementById("orientation_toitureS5_input").value;
+            configuration_data["surface_azimuth_toitureS6"] = document.getElementById("orientation_toitureS6_input").value;
+        }else if(type_de_configuration === "Obmrière") {
+            configuration_data["ombriere_surface1"] = document.getElementById("ombriere_surface1_input").value;
+            configuration_data["ombriere_surface2"] = document.getElementById("ombriere_surface2_input").value;
+            configuration_data["ombriere_surface3"] = document.getElementById("ombriere_surface3_input").value;
+
+            configuration_data["surface_tilt_ombS1"] = document.getElementById("inclinaison_ombS1_input").value;
+            configuration_data["surface_tilt_ombS2"] = document.getElementById("inclinaison_ombS2_input").value;
+            configuration_data["surface_tilt_ombS3"] = document.getElementById("inclinaison_ombS3_input").value;
+        }
+
+        fetch('https://api.enervivo.fr/calculate_pv', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(configuration_data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Data sent from server: ", data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            })
+</script>
